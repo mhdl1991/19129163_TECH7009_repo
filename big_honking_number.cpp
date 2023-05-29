@@ -23,18 +23,24 @@ public namespace BigNumbers {
 		
 		public:
 			HugeInt(){
-				value_ = {0};
+				this.value_ = {0};
 			}
 			
 			// addition
 			HugeInt & HugeInt::operator += (HugeInt const& operand){
-				uint32_t count, carry = 0, op0, op1, digits_result;
+				uint32_t count, carry = 0, carry_old, op0, op1, digits_result;
 				for (count = 0; count < std::max(value_.size(), operand.value_.size());  count++){
 					op0 = count < value_.size() ? value_.at(count) : 0;
 					op1 = count < operand.value_.size() ? operand.value_.at(count) : 0;
 					digits_result = op0 + op1 + carry;
 					
+					if ( (digits_result - carry) < std::max(op0, op1)){
+						carry_old = carry;
+						carry = digits_result;
+						digits_result = (op0 + op1 + carry) >> sizeof(uint32_t) * 8;
+					} else {carry = 0; }
 				}
+				return *this;
 			}
 	};
 }
