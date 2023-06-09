@@ -75,6 +75,9 @@ std::vector<int64_t> list_of_e (int64_t phi_n) {
 }
 
 int64_t get_inverse(int64_t a, int64_t n) {
+	// this algorithm doesn't actually work?
+	
+	
 	int64_t n0 = n, y = 0, x = 1, q,  t;
 	if  (n == 1) {return 0;}
 	while (a > 1) { 
@@ -124,8 +127,8 @@ void print_hex(int64_t c) {
 int main(int argc, char **argv) {	
 	
 	srand((unsigned int)time(NULL));
-	int64_t p1 = 6491, p2 = 6689;
-	//int64_t p1 = 23, p2 = 31;
+	//int64_t p1 = 6491, p2 = 6689;
+	int64_t p1 = 13, p2 = 31;
 	int64_t n = p1 * p2;
 	int64_t phi_n = phi(p1, p2);
 	std::vector<int64_t> list_e = list_of_e(phi_n);
@@ -143,9 +146,9 @@ int main(int argc, char **argv) {
 	std::cout << "The value of phi(n) is " << phi_n << std::endl;
 	
 	// prints possible encryption keys
-	// std::cout << "We can use the following values as encryption keys: ";
-	// for (int _e: list_e) { std::cout << _e << ", ";}
-	// std::cout << std::endl;
+	std::cout << "We can use the following values as encryption keys: ";
+	for (int _e: list_e) { std::cout << _e << ", ";}
+	std::cout << std::endl;
 	
 	// randomly select an encryption key and calculate it's decryption key
 	std::cout << "Let's take an example encryption key of " << e << std::endl;
