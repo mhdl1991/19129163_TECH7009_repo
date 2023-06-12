@@ -26,8 +26,17 @@ public namespace BigNumbers {
 				this.value_ = {0};
 			}
 			
+			// printing to stream
+			std::ostream operator<<(std::ostream& os, const HugeInt& num){
+				for (uint32_t n: this.value_) {
+					
+				}
+				return os;
+			}
+			
+			
 			// addition
-			HugeInt & HugeInt::operator += (HugeInt const& operand){
+			HugeInt&HugeInt::operator += (HugeInt const& operand) {
 				uint32_t count, carry = 0, carry_old, op0, op1, digits_result;
 				for (count = 0; count < std::max(value_.size(), operand.value_.size());  count++){
 					op0 = count < value_.size() ? value_.at(count) : 0;
@@ -42,5 +51,13 @@ public namespace BigNumbers {
 				}
 				return *this;
 			}
+			// subtraction
+			HugeInt&HugeInt&HugeInt::operator -= (HugeInt const& operand) {
+				
+				return *this;
+			}
+			// multiplication
+			
+			// division
 	};
 }

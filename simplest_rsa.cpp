@@ -75,9 +75,6 @@ std::vector<int64_t> list_of_e (int64_t phi_n) {
 }
 
 int64_t get_inverse(int64_t a, int64_t n) {
-	// this algorithm doesn't actually work?
-	
-	
 	int64_t n0 = n, y = 0, x = 1, q,  t;
 	if  (n == 1) {return 0;}
 	while (a > 1) { 
@@ -91,7 +88,6 @@ int64_t get_inverse(int64_t a, int64_t n) {
 	}
 	if (x < 0) {x += n0;}
 	return x;
-
 }
 
 std::vector<int64_t> encrypt(std::string plaintext, int64_t e, int64_t n){
@@ -124,11 +120,37 @@ void print_hex(int64_t c) {
 }
 
 
+
+std::tuple<int64_t, int64_t> pick_primes(int64_t e) {
+	// randomly pick prime numbers p and q based on if e is co-prime with both (p-1) and (q-1)
+	int64_t p, q;
+
+	// select p
+	for(;;) {
+		p = rand();
+		if !(p & 1) {continue;} // no evens, try again	
+		// prime check
+		if (stein_gcd(e, p - 1) == 1) {break;}
+	}
+	// select q
+	for(;;) {	
+		q = rand();
+		if !(q & 1) {continue;} // no evens, try again
+		if (p == q) {continue;} // cannot be equal to p
+		// prime check
+		
+		if (stein_gcd(e, q - 1) == 1) {break;}
+	}
+	return std::tuple<int64_t, int64_t>{p, q};
+}
+
+
+
 int main(int argc, char **argv) {	
 	
 	srand((unsigned int)time(NULL));
-	//int64_t p1 = 6491, p2 = 6689;
-	int64_t p1 = 13, p2 = 31;
+	int64_t p1 = 6491, p2 = 6689;
+	//int64_t p1 = 13, p2 = 31;
 	int64_t n = p1 * p2;
 	int64_t phi_n = phi(p1, p2);
 	std::vector<int64_t> list_e = list_of_e(phi_n);
@@ -137,8 +159,6 @@ int main(int argc, char **argv) {
 	
 	std::string plaintext = "Hello world! Isn't this exciting?";
 	std::vector<int64_t> ciphertext = encrypt(plaintext, e, n);
-	
-	
 	
 	std::cout << "A very simple RSA implementation demo. Not for serious use" << std::endl;
 	std::cout << "We'll be using prime numbers p = " << p1 << " and q = " << p2 << std::endl;
