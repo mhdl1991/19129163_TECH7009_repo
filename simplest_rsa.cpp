@@ -7,8 +7,11 @@
 #include <ctime>
 #include <climits>
 #define i64 int64_t
-#define u64 uint64_t
 
+// just to make typing shorter lol
+#define u64 uint64_t
+#define vec std::vector
+#define str std::string
 
 
 // Modular multiplication
@@ -96,8 +99,8 @@ bool is_coprime_test (i64 p, u64 q) {
 	return (stein_gcd(p, q) == 1);
 }
 
-std::vector<u64> list_of_e (u64 phi_n) {
-	std::vector<u64> list;
+vec<u64> list_of_e (u64 phi_n) {
+	vec<u64> list;
 	for (u64 i = 2; i < phi_n; i++){
 		if (is_coprime_test(i, phi_n)) {list.push_back(i);}
 	}
@@ -120,9 +123,9 @@ u64 get_inverse(u64 a, u64 n) {
 	return x;
 }
 
-std::vector<u64> encrypt(std::string plaintext, u64 e, u64 n){
+vec<u64> encrypt(str plaintext, u64 e, u64 n){
 	// very naive RSA encryption implementation
-	std::vector<u64> ciphertext;
+	vec<u64> ciphertext;
 	u64 ip, ic;
 	
 	for (char p: plaintext){
@@ -133,8 +136,8 @@ std::vector<u64> encrypt(std::string plaintext, u64 e, u64 n){
 	return ciphertext;
 }
 
-std::string decrypt(std::vector<u64> ciphertext, u64 d, u64 n) {
-	std::string plaintext = "";
+str decrypt(vec<u64> ciphertext, u64 d, u64 n) {
+	str plaintext = "";
 	u64 ip;
 	for (u64 c: ciphertext){
 		ip = mod_exp_v0(c, d, n);
@@ -156,12 +159,12 @@ int main(int argc, char **argv) {
 	u64 p1 = 17, p2 = 41;
 	u64 n = p1 * p2;
 	u64 phi_n = phi(p1, p2);
-	std::vector<u64> list_e = list_of_e(phi_n);
+	vec<u64> list_e = list_of_e(phi_n);
 	u64 e = list_e[rand() % list_e.size()];
 	u64 d = get_inverse(e, phi_n);
 	
-	std::string plaintext = "Hello world! Isn't this exciting?";
-	std::vector<u64> ciphertext = encrypt(plaintext, e, n);
+	str plaintext = "Hello world! Isn't this exciting?";
+	vec<u64> ciphertext = encrypt(plaintext, e, n);
 	
 	std::cout << "A very simple RSA implementation demo. Not for serious use" << std::endl;
 	std::cout << "We'll be using prime numbers p = " << p1 << " and q = " << p2 << std::endl;
