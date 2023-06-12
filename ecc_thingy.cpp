@@ -41,7 +41,7 @@ std::tuple<uint64_t, uint64_t, bool> sqrt_mod(uint64_t a, uint64_t p) {
 	
 }
 
-// pular exponentiation
+// Modular exponentiation
 uint64_t pow_mod(uint64_t a, uint64_t b, uint64_t p) {
 	int x = 1;
 	if (1 & b) { x = a; }
