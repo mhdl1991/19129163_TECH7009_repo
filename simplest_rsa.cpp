@@ -162,8 +162,8 @@ void print_hex(u64 c) {
 int main(int argc, char **argv) {	
 	
 	srand((unsigned int)time(NULL));
-	//u64 p1 = 6491, p2 = 6689;
-	u64 p1 = 17, p2 = 41;
+	u64 p1 = 6491, p2 = 6689;
+	//u64 p1 = 17, p2 = 41;
 	u64 n = p1 * p2;
 	u64 phi_n = phi(p1, p2);
 	vec<u64> list_e = list_of_e(phi_n);
