@@ -82,15 +82,15 @@ u64 phi(u64 p, u64 q) {
 	return ((p - 1) * (q - 1));
 }
 
-u64 mod_exp_v0 (u64 base, u64 exp, u64 mod) {
+u64 exp_mod (u64 base, u64 exp, u64 mod) {
 	int result = 1;
 	
 	if (1 & exp) { result = base; }
 	while(1) {
 		if (!exp) {break;}
 		exp >>= 1;
-		base = (base * base) % mod; //mult_mod(base, base, mod); //
-		if (exp & 1) { result = (result * base) % mod; }//{result = mult_mod(result, base, mod); }//
+		base = mult_mod(base, base, mod); //(base * base) % mod; //
+		if (exp & 1) {result = mult_mod(result, base, mod); }//{ result = (result * base) % mod; }//
 	}
 	return result;
 }
@@ -116,7 +116,7 @@ u64 get_inverse(u64 a, u64 n) {
 		n = a % n;
 		a = t;
 		t = y;
-		y = x - q * y;
+		y = x - mult_mod(q, y, n); //x - q * y;
 		x = t;
 	}
 	if(x < 0) {x += n0;}
@@ -130,7 +130,7 @@ vec<u64> encrypt(str plaintext, u64 e, u64 n){
 	
 	for (char p: plaintext){
 		ip = p;
-		ic = mod_exp_v0(ip, e, n);
+		ic = exp_mod(ip, e, n);
 		ciphertext.push_back(ic);
 	}
 	return ciphertext;
@@ -140,7 +140,7 @@ str decrypt(vec<u64> ciphertext, u64 d, u64 n) {
 	str plaintext = "";
 	u64 ip;
 	for (u64 c: ciphertext){
-		ip = mod_exp_v0(c, d, n);
+		ip = exp_mod(c, d, n);
 		plaintext += (char) ip;
 	}
 	return plaintext;
