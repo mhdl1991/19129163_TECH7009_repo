@@ -6,10 +6,11 @@
 #include <random>
 #include <ctime>
 #include <climits>
-#define i64 int64_t
+
 
 // just to make typing shorter lol
 #define u64 uint64_t
+#define i64 int64_t
 #define vec std::vector
 #define str std::string
 
@@ -107,20 +108,26 @@ vec<u64> list_of_e (u64 phi_n) {
 	return list;
 }
 
-u64 get_inverse(u64 a, u64 n) {
-	u64 n0 = n, y = 0, x = 1, q, t;
-	if  (n == 1) {return 0;}
-	while (a > 1) { 
-		q =  a / n;
-		t =  n;
-		n = a % n;
-		a = t;
-		t = y;
-		y = x - mult_mod(q, y, n); //x - q * y;
-		x = t;
+u64 get_inverse(u64 val, u64 mod) {
+	i64 y2, y1 = 0, y0 = 1;
+	u64 a0, a1 = mod, a2 = val, q = 0;
+
+	while (a2 != 0) {
+		y2 = y0 - static_cast<i64>(q) * y1;
+		y0 = y1;
+		a0 = a1;
+		y1 = y2;
+		a1 = a2;
+
+		q = a0/a1;
+		a2 = a0 - q * a1;
 	}
-	if(x < 0) {x += n0;}
-	return x;
+	i64 y = y1;
+	u64 gcd = a1;
+	if (gcd == 1) {
+		return (y >= 0) ? static_cast<u64>(y) : static_cast<u64>(y + mod);
+	}
+	return 0;
 }
 
 vec<u64> encrypt(str plaintext, u64 e, u64 n){
