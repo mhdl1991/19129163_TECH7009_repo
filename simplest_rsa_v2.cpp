@@ -51,11 +51,8 @@ void euler_totient_function(mpz_t phi_n, const mpz_t p, const mpz_t q) {
 }
 
 int main(int argc, char **argv) {		
-	srand((unsigned int)time(NULL));
-	
 	std::string plaintext = "Textbook RSA encryption program made using the GMP library";
 	std::vector<mpz_class> ciphertext, decrypted_plaintext;
-
 
 	mpz_t _temp1, _temp2, e, d, p, q, n, phi_n;
 	mpz_inits(_temp1, _temp2, e, d, p, q, n, phi_n, 0);
