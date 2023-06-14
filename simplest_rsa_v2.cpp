@@ -40,6 +40,32 @@ std::vector<mpz_class> decrypt (std::vector<mpz_class> ciphertext, const mpz_t d
 	return plaintext;
 }
 
+void random_p_q_selection(mpz_t p, mpz_t q, gmp_randstate_t s, const mpz_t e) {
+	// select random primes for p and q
+	mpz_t p1, q1, size, temp;
+    bool p_isprime = false;
+	mpz_inits(p1, q1, size, temp, 0);
+	for(;;){
+        mpz_urandomb(p, s, 1024);
+        mpz_nextprime(q, p);
+        mpz_sub_ui(p1, p, 1);
+        mpz_sub_ui(q1, q, 1);
+        p_isprime = mpz_probab_prime_p(p, 20);
+        
+        if (!p_isprime) {continue;} // p, q must be prime
+        
+        mpz_gcd(temp, p1, e);
+        if (mpz_cmp_ui(temp, 1) != 0) {continue;}
+        mpz_gcd(temp, q1, e);
+        if (mpz_cmp_ui(temp, 1) != 0) {continue;}
+		break;
+	}
+
+	mpz_clears(p1,q1, size, temp, 0);
+	return;
+}
+
+
 void euler_totient_function(mpz_t phi_n, const mpz_t p, const mpz_t q) {
 	mpz_t p_, q_;
 	mpz_inits(p_, q_, 0);
@@ -51,6 +77,12 @@ void euler_totient_function(mpz_t phi_n, const mpz_t p, const mpz_t q) {
 }
 
 int main(int argc, char **argv) {		
+
+	gmp_randstate_t mt;
+	gmp_randinit_mt(mt);
+    gmp_randseed_ui(mt, 	(unsigned int)time(NULL) );
+
+
 	std::string plaintext = "Textbook RSA encryption program made using the GMP library";
 	std::vector<mpz_class> ciphertext, decrypted_plaintext;
 
@@ -61,9 +93,12 @@ int main(int argc, char **argv) {
 	mpz_set_str(e, "3", 10);
 
 	// pick two prime numbers p and q where (p-1) and (q-1) are both coprime with e;
-	mpz_set_str(p, "6491", 10);
-	mpz_set_str(q, "6689", 10);
-
+	//mpz_set_str(p, "6491", 10);
+	//mpz_set_str(q, "6689", 10);
+    random_p_q_selection(p, q, mt, e);
+    
+    
+    
 	// calculate n = pq and phi(n) = (p-1)(q-1)
 	mpz_mul(n, p, q);
 	euler_totient_function(phi_n, p, q);
@@ -118,5 +153,7 @@ int main(int argc, char **argv) {
 	std::cout << std::endl;
 
 	mpz_clears(_temp1, _temp2, e, d, p, q, n, phi_n, 0);
+
+	gmp_randclear(mt);
 	return 0;
 }
