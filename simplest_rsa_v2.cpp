@@ -16,12 +16,11 @@
 
 void save_ciphertext_to_file(std::string dest_filename, std::vector<mpz_class> ciphertext){
 	// save ciphertexts to file.
-	ofstream f_out;
+	std::ofstream f_out;
 	f_out.open(dest_filename);
-	
 	for (mpz_class z : ciphertext) {
-		mpz_out_str(f_out, 16, z.get_mpz_t()); // Write the ciphertext as a hexadecimal 
-		f_out << " ";
+		//mpz_out_str(f_out, 16, z.get_mpz_t()); // Write the ciphertext as a hexadecimal 
+		f_out << z << " ";
 	}
 	f_out.close();
 	return;
