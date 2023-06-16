@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <utility>
 #include <vector>
 #include <string>
@@ -11,6 +12,20 @@
 
 
 // based partly on https://gist.github.com/akosma/865b887f993de462369a04f4e81596b8
+
+
+void save_ciphertext_to_file(std::string dest_filename, std::vector<mpz_class> ciphertext){
+	// save ciphertexts to file.
+	ofstream f_out;
+	f_out.open(dest_filename);
+	
+	for (mpz_class z : ciphertext) {
+		mpz_out_str(f_out, 16, z.get_mpz_t()); // Write the ciphertext as a hexadecimal 
+		f_out << " ";
+	}
+	f_out.close();
+	return;
+}
 
 std::vector<mpz_class> encrypt (std::string plaintext, const mpz_t e, const mpz_t mod) {
 	std::vector<mpz_class> ciphertext;
@@ -83,7 +98,7 @@ int main(int argc, char **argv) {
     gmp_randseed_ui(mt, 	(unsigned int)time(NULL) );
 
 
-	std::string plaintext = "Textbook RSA encryption program made using the GMP library";
+	std::string plaintext = "Test Plaintext! Let's have fun.";
 	std::vector<mpz_class> ciphertext, decrypted_plaintext;
 
 	mpz_t _temp1, _temp2, e, d, p, q, n, phi_n;
@@ -105,14 +120,11 @@ int main(int argc, char **argv) {
 
 	// get the decryption key (inverse of e in modulo phi(n) )
 	mpz_invert(d, e, phi_n);
-
-	mpz_mul(_temp1, e, d);
-	mpz_mod(_temp2, _temp1, phi_n);
-	if (mpz_cmp_ui(_temp2, 1) != 0) {
-		std::cout << "Something has gone wrong here" << std::endl;
-	}
-
-
+	//mpz_mul(_temp1, e, d);
+	//mpz_mod(_temp2, _temp1, phi_n);
+	//if (mpz_cmp_ui(_temp2, 1) != 0) {
+	//	std::cout << "Something has gone wrong here" << std::endl;
+	//}
 
 	std::cout << "Textbook RSA C++ program using the GMP library." << std::endl;
 	std::cout << "Encryption exponent is e = " << e << std::endl;
@@ -138,6 +150,10 @@ int main(int argc, char **argv) {
 		std::cout << m << " ";
 	}
 	std::cout << std::endl;
+	
+	std::string file_out = "c.txt";
+	std::cout << "Writing the ciphertext to a file" << file_out << std::endl;
+	save_ciphertext_to_file(file_out, ciphertext);
 	
 
 	std::cout << "DECRYPTION" << std::endl;
