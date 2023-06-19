@@ -10,9 +10,9 @@
 #include <gmp.h>
 #include <gmpxx.h>
 
-
 // based partly on https://gist.github.com/akosma/865b887f993de462369a04f4e81596b8
 
+// this program will be used to generate ciphertexts for use with the demonstration of Hastad's attack
 
 void save_ciphertext_to_file(std::string dest_filename, std::vector<mpz_class> ciphertext){
 	// save ciphertexts to file.
@@ -79,7 +79,6 @@ void random_p_q_selection(mpz_t p, mpz_t q, gmp_randstate_t s, const mpz_t e) {
 	return;
 }
 
-
 void euler_totient_function(mpz_t phi_n, const mpz_t p, const mpz_t q) {
 	mpz_t p_, q_;
 	mpz_inits(p_, q_, 0);
@@ -91,40 +90,42 @@ void euler_totient_function(mpz_t phi_n, const mpz_t p, const mpz_t q) {
 }
 
 int main(int argc, char **argv) {		
-
-    // initialize the RNG
+    // initialize the RNG and seed it
 	gmp_randstate_t mt;
 	gmp_randinit_mt(mt);
-    gmp_randseed_ui(mt, 	(unsigned int)time(NULL) );
+    gmp_randseed_ui(mt,(unsigned int)time(NULL) );
     // GMP library variables
 	mpz_t _temp1, _temp2, e, d, p, q, n, phi_n;
 	mpz_inits(_temp1, _temp2, e, d, p, q, n, phi_n, 0);
 	std::vector<mpz_class> ciphertext, decrypted_plaintext;
 
-    // test plaintext
-	std::string plaintext = "E";
-    
+    // test plaintexts
+	std::string[] plaintext = {"E", "F", "G"};
+	
+	// files for storing ciphertext
+	std::string[] file_out = {"c1.txt", "c2.txt", "c3.txt"};
+	
 	// pick an encryption key;
 	mpz_set_str(e, "3", 10);
-	// pick two prime numbers p and q where (p-1) and (q-1) are both coprime with e;
-    random_p_q_selection(p, q, mt, e);
-    // get pq = n
-	mpz_mul(n, p, q);
-    // euler totient function
-	euler_totient_function(phi_n, p, q);
-    // get the decryption exponent
-	mpz_invert(d, e, phi_n);
-    
+	
 	std::cout << "RSA program for testing Hastad's attack" << std::endl;
 	std::cout << "Encryption exponent is e = " << e << std::endl;
-	std::cout << "Primes chosen are p = " << p << " and q = " << q << std::endl;
-	std::cout << "n = pq = " << n << std::endl;
-	std::cout << "phi(n) = (p-1)(q-1) = " << phi_n << std::endl;
-	std::cout << "decryption key is d = " << d << std::endl;
-	ciphertext = encrypt(plaintext, e, n);
-	std::string file_out = "c1.txt";
-	save_ciphertext_to_file(file_out, ciphertext);
 	
+	for (int i = 0; i < 3; i++) {
+		std::cout << "PLAINTEXT: " << plaintext[i] << std::endl;
+		
+		// pick two prime numbers p and q where (p-1) and (q-1) are both coprime with e;
+		random_p_q_selection(p, q, mt, e);
+		// get pq = n
+		mpz_mul(n, p, q);
+		// euler totient function
+		euler_totient_function(phi_n, p, q);
+		
+		ciphertext = encrypt(plaintext[i], e, n);
+		save_ciphertext_to_file(file_out[i], ciphertext);
+		
+		std::cout << "Saved ciphertext to " << file_out[i] << std::endl;
+	}
 
     // clear GMP variables
 	mpz_clears(_temp1, _temp2, e, d, p, q, n, phi_n, 0);
