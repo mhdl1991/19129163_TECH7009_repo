@@ -100,10 +100,10 @@ int main(int argc, char **argv) {
 	std::vector<mpz_class> ciphertext, decrypted_plaintext;
 
     // test plaintexts
-	std::string[] plaintext = {"E", "F", "G"};
+	std::vector<std::string> plaintext = {"E", "F", "G"};
 	
 	// files for storing ciphertext
-	std::string[] file_out = {"c1.txt", "c2.txt", "c3.txt"};
+	std::vector<std::string> file_out = {"c1.txt", "c2.txt", "c3.txt"};
 	
 	// pick an encryption key;
 	mpz_set_str(e, "3", 10);
