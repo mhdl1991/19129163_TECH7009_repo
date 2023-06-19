@@ -27,10 +27,21 @@ std::vector<mpz_class> read_ciphertext_from_file(std::string filename){
 }
 
 int main (int argc, char **argv){
-    
-	std::vector<mpz_class> c1 = read_ciphertext_from_file("c1.txt");
-    std::vector<mpz_class> c2 = read_ciphertext_from_file("c2.txt");
-    std::vector<mpz_class> c3 = read_ciphertext_from_file("c3.txt");
+	std::vector<std::string> file_names = {"c1.txt", "c2.txt", "c3.txt"};
+	
+	mpz_t _C1, _C2, _C3, _C;
+	mpz_inits(_C1, _C2, _C3, _C, 0);
+	
+	std::vector<mpz_class> c1 = read_ciphertext_from_file("c1.txt")
+		,	c2 = read_ciphertext_from_file("c2.txt")
+		,	c3 = read_ciphertext_from_file("c3.txt");
 
+	mpz_set(_C1, c1[0].get_mpz_t());
+	mpz_set(_C2, c2[0].get_mpz_t());
+	mpz_set(_C3, c3[0].get_mpz_t());
+	
+
+
+	mpz_clears(_C1, _C2, _C3, _C, 0);
 	return 0;
 }
