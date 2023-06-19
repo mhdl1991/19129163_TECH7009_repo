@@ -7,6 +7,7 @@
 #include <random>
 #include <ctime>
 #include <climits>
+#include <chrono>
 #include <gmp.h>
 #include <gmpxx.h>
 
@@ -99,6 +100,11 @@ int main(int argc, char **argv) {
 	mpz_inits(_temp1, _temp2, e, d, p, q, n, phi_n, 0);
 	std::vector<mpz_class> ciphertext, decrypted_plaintext;
 
+
+	// timing
+	auto start = std::chrono::high_resolution_clock::now();
+	auto end = std::chrono::high_resolution_clock::now();
+
     // test plaintexts
 	std::vector<std::string> plaintext = {"E", "F", "G"};
 	
@@ -112,6 +118,8 @@ int main(int argc, char **argv) {
 	std::cout << "Encryption exponent is e = " << e << std::endl;
 	
 	for (int i = 0; i < 3; i++) {
+		start = std::chrono::high_resolution_clock::now();
+		
 		std::cout << "PLAINTEXT: " << plaintext[i] << std::endl;
 		
 		// pick two prime numbers p and q where (p-1) and (q-1) are both coprime with e;
@@ -125,6 +133,11 @@ int main(int argc, char **argv) {
 		save_ciphertext_to_file(file_out[i], ciphertext);
 		
 		std::cout << "Saved ciphertext to " << file_out[i] << std::endl;
+		
+		end = std::chrono::high_resolution_clock::now();
+		
+		auto duration = std::chrono::duration_cast<microseconds>(end - start);
+		std::cout << "Time taken: " << duration.count() << std::endl;
 	}
 
     // clear GMP variables
