@@ -26,11 +26,17 @@ std::vector<mpz_class> read_ciphertext_from_file(std::string filename){
     return ciphertext;
 }
 
+
+void get_cube_root (mpz_t answer, mpz_t rem, const mpz_t n) {
+	mpz_rootrem(answer, rem, n, 3);
+	return;
+}
+
 int main (int argc, char **argv){
 	std::vector<std::string> file_names = {"c1.txt", "c2.txt", "c3.txt"};
 	
-	mpz_t _C1, _C2, _C3, _C, temp;
-	mpz_inits(_C1, _C2, _C3, _C, temp, 0);
+	mpz_t _C1, _C2, _C3, _C, temp1, temp2;
+	mpz_inits(_C1, _C2, _C3, _C, temp1, temp2, 0);
 	
 	std::vector<mpz_class> c1 = read_ciphertext_from_file("c1.txt")
 		,	c2 = read_ciphertext_from_file("c2.txt")
@@ -40,10 +46,12 @@ int main (int argc, char **argv){
 	mpz_set(_C2, c2[0].get_mpz_t());
 	mpz_set(_C3, c3[0].get_mpz_t());
 	
-	mpz_mul(temp, _C1, _C2);
-	mpz_mul(_C, temp, _C3);
+	mpz_mul(temp1, _C1, _C2);
+	mpz_mul(_C, temp1, _C3);
+	get_cube_root(temp2, temp1, _C); //temp2 is the integer part of the cube root of _C, temp1 is the remainder
+	
 	
 
-	mpz_clears(_C1, _C2, _C3, _C, temp, 0);
+	mpz_clears(_C1, _C2, _C3, _C, temp1, temp2, 0);
 	return 0;
 }
