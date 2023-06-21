@@ -44,7 +44,7 @@ int main (int argc, char **argv){
 	mpz_mul(_C, temp1, _C3);
 	// get_cube_root(temp2, temp1, _C); //temp2 is the integer part of the cube root of _C, temp1 is the remainder
     
-	mpz_rootrem(_root, _temp2, _C, 3);
+	mpz_rootrem(_root, temp2, _C, 3);
     std::cout << _root << std::endl;
 	
 
