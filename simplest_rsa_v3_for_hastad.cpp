@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
 	auto end = std::chrono::high_resolution_clock::now();
 
     // test plaintexts
-	std::vector<std::string> plaintext = {"E", "F", "G"};
+	std::vector<std::string> plaintext = {"E", "E", "E"};
 	
 	// files for storing ciphertext
 	std::vector<std::string> file_out = {"c1.txt", "c2.txt", "c3.txt"};

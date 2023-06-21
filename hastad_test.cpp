@@ -46,6 +46,8 @@ int main (int argc, char **argv){
     
 	mpz_rootrem(_root, temp2, _C, 3);
     std::cout << _root << std::endl;
+    std::cout << temp2 << std::endl;
+    
 	
 
 	mpz_clears(_C1, _C2, _C3, _C, _root, temp1, temp2, 0);
