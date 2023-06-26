@@ -27,67 +27,81 @@ std::vector<mpz_class> read_from_file(std::string filename){
 }
 
 int main (int argc, char **argv){
-	mpz_t 	_C1, _C2, _C3, _C, 
-			_N1, _N2, _N3, _N,
-			n1, n2, n3,
+	mpz_t 	C1, C2, C3, C, 
+			N1, N2, N3, N,
+            n1, n2, n3,
 			y1, y2, y3,
 			x,
-			temp1, temp2;
+			temp1, temp2, temp3;
 	
-	mpz_inits(	_C1, _C2, _C3, _C, 
-				_N1, _N2, _N3, _N, 
-				n1, n2, n3,
+	mpz_inits(	C1, C2, C3, C, 
+				N1, N2, N3, N, 
+                n1, n2, n3,
 				y1, y2, y3,
 				x,
-				temp1, temp2, 0);
+				temp1, temp2, temp3, 0);
 	
-	std::vector<mpz_class> c1 = read_from_file("c1.txt")
-		,	c2 = read_from_file("c2.txt")
-		,	c3 = read_from_file("c3.txt")
-		,	n1 = read_from_file("n1.txt")
-		,	n2 = read_from_file("n2.txt")
-		,	n3 = read_from_file("n3.txt");
+	std::vector<mpz_class> read_c1 = read_from_file("c1.txt")
+		,	read_c2 = read_from_file("c2.txt")
+		,	read_c3 = read_from_file("c3.txt")
+		,	read_n1 = read_from_file("n1.txt")
+		,	read_n2 = read_from_file("n2.txt")
+		,	read_n3 = read_from_file("n3.txt");
 
-	mpz_set(_C1, c1[0].get_mpz_t());
-	mpz_set(_C2, c2[0].get_mpz_t());
-	mpz_set(_C3, c3[0].get_mpz_t());
+	mpz_set(C1, read_c1[0].get_mpz_t());
+	mpz_set(C2, read_c2[0].get_mpz_t());
+	mpz_set(C3, read_c3[0].get_mpz_t());
 	
-	mpz_set(_N1, n1[0].get_mpz_t());
-	mpz_set(_N2, n2[0].get_mpz_t());
-	mpz_set(_N3, n3[0].get_mpz_t());
+	mpz_set(N1, read_n1[0].get_mpz_t());
+	mpz_set(N2, read_n2[0].get_mpz_t());
+	mpz_set(N3, read_n3[0].get_mpz_t());
 	
-	mpz_mult(temp1, _N1, _N2); 
-	mpz_mult(_N, temp1, _N3); // N = N1 * N2 * N3
+	mpz_mul(temp1, N1, N2); 
+	mpz_mul(N, temp1, N3); // N = N1 * N2 * N3
 	
-	mpz_fdiv_q(n1, _N, _N1); // n1 = N / N1
-	mpz_fdiv_q(n2, _N, _N2); // n2 = N / N2
-	mpz_fdiv_q(n3, _N, _N3); // n3 = N / N3
+	mpz_fdiv_q(n1, N, N1); // n1 = N / N1
+	mpz_fdiv_q(n2, N, N2); // n2 = N / N2
+	mpz_fdiv_q(n3, N, N3); // n3 = N / N3
 	
-	mpz_invert(y1, _N1, n1);  // n1 * y1 = 1 mod N1
-	mpz_invert(y2, _N2, n2);  // n2 * y2 = 1 mod N2
-	mpz_invert(y3, _N3, n3);  // n3 * y3 = 1 mod N3
+	mpz_invert(y1, n1, N1);  // n1 * y1 = 1 mod N1
+	mpz_invert(y2, n2, N2);  // n2 * y2 = 1 mod N2
+	mpz_invert(y3, n3, N3);  // n3 * y3 = 1 mod N3
 	
 	// x =  c1y1n1 + c2y2n2 + c3y3n3 (mod N)
-	mpz_mult(temp2, c1, y1);
-	mpz_mult(temp1, temp2, n1);
-	mpz_add(x, temp1);
+    mpz_set_ui(x, 0);
+    mpz_mul(temp1, C1, y1); 
+    mpz_mul(temp2, temp1,  n1);
+    mpz_add(x, x, temp2);
+    
+    mpz_mul(temp1, C2, y2);
+    mpz_mul(temp2, temp1,  n2);
+    mpz_add(x, x, temp2);
+    
+    mpz_mul(temp1, C3, y3);
+    mpz_mul(temp2, temp1,  n3);
+    mpz_add(x, x,temp2);
+    
+    mpz_mod(x, x, N);
+    
+    mpz_mod(temp1, x, N1);
+    mpz_mod(temp2, x, N2);
+    mpz_mod(temp3, x, N3);
 	
-	mpz_mult(temp2, c2, y2);
-	mpz_mult(temp1, temp2, n2);
-	mpz_add(x, temp1);
+	std::cout << "x = " << x << std::endl;
+    
+    std::cout << "x (mod N1) = "  << temp1 << std::endl;
+    std::cout << "x (mod N2) = "  << temp2 << std::endl;
+    std::cout << "x (mod N3) = "  << temp3 << std::endl;
+    
+    mpz_root(x, x, 3);
+    std::cout << "cube root of x = " << x << std::endl;
+	
 
-	mpz_mult(temp2, c3, y3);
-	mpz_mult(temp1, temp2, n3);
-	mpz_add(x, temp1);
-	
-	std::cout << x << std::endl;
-	
-
-	mpz_clears(	_C1, _C2, _C3, _C, 
-				_N1, _N2, _N3, _N, 
-				n1, n2, n3,
+	mpz_clears(	C1, C2, C3, C, 
+				N1, N2, N3, N, 
+                n1, n2, n3,
 				y1, y2, y3,
 				x,
-				temp1, temp2, 0);
+				temp1, temp2, temp3, 0);
 	return 0;
 }
