@@ -31,12 +31,14 @@ int main (int argc, char **argv){
 			_N1, _N2, _N3, _N,
 			n1, n2, n3,
 			y1, y2, y3,
+			x,
 			temp1, temp2;
 	
 	mpz_inits(	_C1, _C2, _C3, _C, 
 				_N1, _N2, _N3, _N, 
 				n1, n2, n3,
 				y1, y2, y3,
+				x,
 				temp1, temp2, 0);
 	
 	std::vector<mpz_class> c1 = read_from_file("c1.txt")
@@ -54,27 +56,38 @@ int main (int argc, char **argv){
 	mpz_set(_N2, n2[0].get_mpz_t());
 	mpz_set(_N3, n3[0].get_mpz_t());
 	
-	mpz_mult(temp1, _N1, _N2);
-	mpz_mult(_N, temp1, _N3);
+	mpz_mult(temp1, _N1, _N2); 
+	mpz_mult(_N, temp1, _N3); // N = N1 * N2 * N3
 	
-	mpz_fdiv_q(n1, _N, _N1);
-	mpz_fdiv_q(n2, _N, _N2);
-	mpz_fdiv_q(n3, _N, _N3);
+	mpz_fdiv_q(n1, _N, _N1); // n1 = N / N1
+	mpz_fdiv_q(n2, _N, _N2); // n2 = N / N2
+	mpz_fdiv_q(n3, _N, _N3); // n3 = N / N3
 	
-	mpz_invert(y1, _N1, n1);
-	mpz_invert(y2, _N2, n2);
-	mpz_invert(y3, _N3, n3);
+	mpz_invert(y1, _N1, n1);  // n1 * y1 = 1 mod N1
+	mpz_invert(y2, _N2, n2);  // n2 * y2 = 1 mod N2
+	mpz_invert(y3, _N3, n3);  // n3 * y3 = 1 mod N3
 	
+	// x =  c1y1n1 + c2y2n2 + c3y3n3 (mod N)
+	mpz_mult(temp2, c1, y1);
+	mpz_mult(temp1, temp2, n1);
+	mpz_add(x, temp1);
 	
+	mpz_mult(temp2, c2, y2);
+	mpz_mult(temp1, temp2, n2);
+	mpz_add(x, temp1);
+
+	mpz_mult(temp2, c3, y3);
+	mpz_mult(temp1, temp2, n3);
+	mpz_add(x, temp1);
 	
-	
-	
+	std::cout << x << std::endl;
 	
 
 	mpz_clears(	_C1, _C2, _C3, _C, 
 				_N1, _N2, _N3, _N, 
 				n1, n2, n3,
 				y1, y2, y3,
+				x,
 				temp1, temp2, 0);
 	return 0;
 }
