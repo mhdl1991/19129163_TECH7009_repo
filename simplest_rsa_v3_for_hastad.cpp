@@ -15,6 +15,19 @@
 
 // this program will be used to generate ciphertexts for use with the demonstration of Hastad's attack
 
+
+void save_modulus_to_file(std::string dest_filename, const mpz_t modulus) {
+	std::ofstream f_out;
+	f_out.open(dest_filename);
+	
+	f_out << modulus << " ";
+	
+	f_out.close();
+	return;
+}
+
+
+
 void save_ciphertext_to_file(std::string dest_filename, std::vector<mpz_class> ciphertext){
 	// save ciphertexts to file.
 	std::ofstream f_out;
@@ -109,7 +122,10 @@ int main(int argc, char **argv) {
 	std::vector<std::string> plaintext = {"E", "E", "E"};
 	
 	// files for storing ciphertext
-	std::vector<std::string> file_out = {"c1.txt", "c2.txt", "c3.txt"};
+	std::vector<std::string> file_out_c = {"c1.txt", "c2.txt", "c3.txt"};
+	
+	// files for storing moduli
+	std::vector<std::string> file_out_n = {"n1.txt", "n2.txt", "n3.txt"};
 	
 	// pick an encryption key;
 	mpz_set_str(e, "3", 10);
@@ -130,9 +146,13 @@ int main(int argc, char **argv) {
 		euler_totient_function(phi_n, p, q);
 		
 		ciphertext = encrypt(plaintext[i], e, n);
-		save_ciphertext_to_file(file_out[i], ciphertext);
+		save_ciphertext_to_file(file_out_c[i], ciphertext);
+		save_modulus_to_file(file_out_n[i], n);
 		
-		std::cout << "Saved ciphertext to " << file_out[i] << std::endl;
+		std::cout << "Saved modulus to " << file_out_n[i] << std::endl;
+		std::cout << "Saved ciphertext to " << file_out_c[i] << std::endl;
+		
+		//save the modulus to a file too
 		
 		end = std::chrono::high_resolution_clock::now();
 		
