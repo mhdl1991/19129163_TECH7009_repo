@@ -2,7 +2,7 @@ import nmapthon2 as nm2
 
 nse = nm2.NSE()
 nmap_ip_range =  ['scanme.nmap.org'] # still working this one out
-nmap_args = '-sS -Pn -n -T5' #'-sS -Pn -n -T5 --min-hostgroup=2000 --max-rtt-timeout=500ms --min-rate=10000' # given by the paper
+nmap_args = '-sS -Pn -n -T5 -D' #'-sS -Pn -n -T5 --min-hostgroup=2000 --max-rtt-timeout=500ms --min-rate=10000' # given by the paper
 nmap_ports = [22, 443] # ports 22 (SSH) and 443 (HTTPS)
 nmap_output = 'all'
 
@@ -10,7 +10,7 @@ try:
     print("Attempting nmap scan\n")
     scanner = nm2.NmapScanner()
     result = scanner.scan(nmap_ip_range, ports = nmap_ports, arguments = nmap_args, output = nmap_output)
-
+    
     print(result.scanner)
     print(result.arguments)
     print(result.start_timestamp)
@@ -28,8 +28,18 @@ try:
     print(result.verbose)
     print(result.debug)
     print(result.tolerant_errors)
-    
 
+    for host in result:
+        print(f'Host: {host.ipv4}')
+        for hostname in host.hostnames():
+            print(f'Hostname: {hostname}')
+            # With type information
+            for hostname, hostname_type in host.hostnames(include_type=True):
+                print(f'Hostname (f{hostname_type}): {hostname}')
+            
+        
+    
+    
 except nm2.exceptions.NmapScanError as e:
     # Errors occurred
     print( 'errors occured: {}'.format(e) )
