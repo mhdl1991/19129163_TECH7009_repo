@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.80 scan initiated Fri Jun 30 16:34:13 2023 as: nmap -&#45;script=/home/malware/Desktop/TECH7009/19129163_TECH7009_repo/ssl-enum-ciphers.nse -sS -Pn -p443,22 -T0 -oX /home/malware/Desktop/TECH7009/19129163_TECH7009_repo/nmap_out.xml scanme.nmap.org -->
+<nmaprun scanner="nmap" args="nmap -&#45;script=/home/malware/Desktop/TECH7009/19129163_TECH7009_repo/ssl-enum-ciphers.nse -sS -Pn -p443,22 -T0 -oX /home/malware/Desktop/TECH7009/19129163_TECH7009_repo/nmap_out.xml scanme.nmap.org" start="1688139253" startstr="Fri Jun 30 16:34:13 2023" version="7.80" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="2" services="22,443"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<runstats><finished time="1688139254" timestr="Fri Jun 30 16:34:14 2023" elapsed="0.55" summary="Nmap done at Fri Jun 30 16:34:14 2023; 0 IP addresses (0 hosts up) scanned in 0.55 seconds" exit="error" errormsg="NSE: failed to initialize the script engine:&#xa;/usr/bin/../share/nmap/nse_main.lua:614: could not load script&#xa;stack traceback:&#xa;&#x9;[C]: in function &apos;error&apos;&#xa;&#x9;/usr/bin/../share/nmap/nse_main.lua:614: in field &apos;new&apos;&#xa;&#x9;/usr/bin/../share/nmap/nse_main.lua:823: in local &apos;get_chosen_scripts&apos;&#xa;&#x9;/usr/bin/../share/nmap/nse_main.lua:1310: in main chunk&#xa;&#x9;[C]: in ?&#xa;"/><hosts up="0" down="0" total="0"/>
+</runstats>
+</nmaprun>
