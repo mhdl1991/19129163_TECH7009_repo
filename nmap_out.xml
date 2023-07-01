@@ -1,3 +1,21 @@
-<nmaprun><runstats><finished time="1688143560" timestr="Fri Jun 30 17:46:00 2023" elapsed="0.05" summary="Nmap done at Fri Jun 30 17:46:00 2023; 0 IP addresses (0 hosts up) scanned in 0.05 seconds" exit="error" errormsg="Failed to resolve decoy host &quot;-&#45;script=/home/kali/Desktop/TECH7009/19129163_TECH7009_repo/ssl-enum-ciphers.nse&quot;: Name or service not known"/><hosts up="0" down="0" total="0"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.80 scan initiated Sat Jul  1 15:12:11 2023 as: nmap -sS -p 22,443 -n -T5 -&#45;script ssl-enum-ciphers.nse -oX nmap_out.xml -&#45;min-hostgroup=2000 -&#45;max-rtt-timeout=500ms -&#45;min-rate=10000 scanme.nmap.org -->
+<nmaprun scanner="nmap" args="nmap -sS -p 22,443 -n -T5 -&#45;script ssl-enum-ciphers.nse -oX nmap_out.xml -&#45;min-hostgroup=2000 -&#45;max-rtt-timeout=500ms -&#45;min-rate=10000 scanme.nmap.org" start="1688220731" startstr="Sat Jul  1 15:12:11 2023" version="7.80" xmloutputversion="1.04">
+<scaninfo type="syn" protocol="tcp" numservices="2" services="22,443"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<host starttime="1688220731" endtime="1688220732"><status state="up" reason="reset" reason_ttl="255"/>
+<address addr="45.33.32.156" addrtype="ipv4"/>
+<hostnames>
+<hostname name="scanme.nmap.org" type="user"/>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="https" method="table" conf="3"/></port>
+</ports>
+<times srtt="1042" rttvar="5000" to="50000"/>
+</host>
+<runstats><finished time="1688220732" timestr="Sat Jul  1 15:12:12 2023" elapsed="0.56" summary="Nmap done at Sat Jul  1 15:12:12 2023; 1 IP address (1 host up) scanned in 0.56 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>
