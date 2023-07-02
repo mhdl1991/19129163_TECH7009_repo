@@ -2,7 +2,7 @@
 
 echo "Running nmap"
 
-nmap -sS -p 22,443 -n -T5 --script ssl-enum-ciphers.nse -D RND:10 -oX nmap_out.xml --min-hostgroup=2000 --max-rtt-timeout=500ms --min-rate=10000 "192.168.10.0/24"
+nmap -sV -p 22,443 -n -T5 --script ssl-enum-ciphers -D RND:10 -oX nmap_out.xml --min-hostgroup=2000 --max-rtt-timeout=500ms --min-rate=10000 "10.0.2.3"
 
 #scanme.nmap.org
 

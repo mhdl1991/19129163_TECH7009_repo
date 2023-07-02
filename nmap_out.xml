@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE nmaprun>
 <?xml-stylesheet href="file:///usr/bin/../share/nmap/nmap.xsl" type="text/xsl"?>
-<!-- Nmap 7.80 scan initiated Sun Jul  2 16:12:37 2023 as: nmap -sS -p 22,443 -n -T5 -&#45;script /home/kali/Desktop/TECH7009/19129163_TECH7009_repo/ssl-enum-ciphers.nse -D RND:10 -oX nmap_out.xml -&#45;min-hostgroup=2000 -&#45;max-rtt-timeout=500ms -&#45;min-rate=10000 192.168.10.0/24 -->
-<nmaprun scanner="nmap" args="nmap -sS -p 22,443 -n -T5 -&#45;script /home/kali/Desktop/TECH7009/19129163_TECH7009_repo/ssl-enum-ciphers.nse -D RND:10 -oX nmap_out.xml -&#45;min-hostgroup=2000 -&#45;max-rtt-timeout=500ms -&#45;min-rate=10000 192.168.10.0/24" start="1688310757" startstr="Sun Jul  2 16:12:37 2023" version="7.80" xmloutputversion="1.04">
-<scaninfo type="syn" protocol="tcp" numservices="2" services="22,443"/>
+<!-- Nmap 7.80 scan initiated Sun Jul  2 17:36:44 2023 as: nmap -sV -Pn -p 22,443 -n -T5 -&#45;script ssl-enum-ciphers -D RND:10 -oX nmap_out.xml 10.0.2.3 -->
+<nmaprun scanner="nmap" args="nmap -sV -Pn -p 22,443 -n -T5 -&#45;script ssl-enum-ciphers -D RND:10 -oX nmap_out.xml 10.0.2.3" start="1688315804" startstr="Sun Jul  2 17:36:44 2023" version="7.80" xmloutputversion="1.04">
+<scaninfo type="connect" protocol="tcp" numservices="2" services="22,443"/>
 <verbose level="0"/>
 <debugging level="0"/>
-<runstats><finished time="1688310757" timestr="Sun Jul  2 16:12:37 2023" elapsed="0.41" summary="Nmap done at Sun Jul  2 16:12:37 2023; 0 IP addresses (0 hosts up) scanned in 0.41 seconds" exit="error" errormsg="NSE: failed to initialize the script engine:&#xa;/usr/bin/../share/nmap/nse_main.lua:614: could not load script&#xa;stack traceback:&#xa;&#x9;[C]: in function &apos;error&apos;&#xa;&#x9;/usr/bin/../share/nmap/nse_main.lua:614: in field &apos;new&apos;&#xa;&#x9;/usr/bin/../share/nmap/nse_main.lua:823: in local &apos;get_chosen_scripts&apos;&#xa;&#x9;/usr/bin/../share/nmap/nse_main.lua:1310: in main chunk&#xa;&#x9;[C]: in ?&#xa;"/><hosts up="0" down="0" total="0"/>
+<host starttime="1688315804" endtime="1688315806"><status state="up" reason="user-set" reason_ttl="0"/>
+<address addr="10.0.2.3" addrtype="ipv4"/>
+<hostnames>
+</hostnames>
+<ports><port protocol="tcp" portid="22"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="ssh" method="table" conf="3"/></port>
+<port protocol="tcp" portid="443"><state state="filtered" reason="no-response" reason_ttl="0"/><service name="https" method="table" conf="3"/></port>
+</ports>
+</host>
+<runstats><finished time="1688315806" timestr="Sun Jul  2 17:36:46 2023" elapsed="1.96" summary="Nmap done at Sun Jul  2 17:36:46 2023; 1 IP address (1 host up) scanned in 1.96 seconds" exit="success"/><hosts up="1" down="0" total="1"/>
 </runstats>
 </nmaprun>
