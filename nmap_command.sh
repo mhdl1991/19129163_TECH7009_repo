@@ -2,7 +2,7 @@
 
 echo "Running nmap"
 
-nmap -sS -p 22,443, -n -T5 --script ssl-enum-ciphers -D RND:10 -oX nmap_out.xml "www.google.com"
+nmap -sS -p 22,443, -n -T5 --script ssl-enum-ciphers -D RND:10 -oX nmap_out.xml "www.google.com" "www.bing.com"
 
 
 #aggressive version

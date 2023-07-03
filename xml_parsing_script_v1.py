@@ -1,10 +1,19 @@
-from xml.dom.minidom import parse, parseString
+#run using python 3
+#python3 xml_parsing_script_v1.py
 
-# the nmap command will save it's output to this file
-xml_file = "nmap_out.xml"
+import xml.etree.ElementTree as ET
+tree = ET.parse("nmap_out.xml")
+root = tree.getroot()
 
-with open(xml_file) as f:
-	document = parse(f)
+#for child in root:
+#	print(f'{child.tag} : {child.attrib}')
+
+
+print("HOSTS:")
+for host in root.iter("host"):
+	for hostname in host.iter("hostnames/hostname"):
+		print(f'{hostname.tag}: {hostname.attrib}')
+
 
 
 
