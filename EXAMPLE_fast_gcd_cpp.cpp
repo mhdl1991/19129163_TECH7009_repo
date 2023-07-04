@@ -4,7 +4,6 @@
 #include <utility>
 #include <vector>
 #include <string>
-#include <format>
 #include <random>
 
 // just to make typing shorter
@@ -66,16 +65,65 @@ vec<u64> read_file(str filename) {
 
 
 
-void remainder_tree() {
+void remainder_tree(int level, vec<u64> orig) {
+	str f_name = "p" + std::to_string(level);
+	vec<u64> P, v;
+	P = read_file(f_name);
+	u64 sqr;
+	
+	std::cout << "REMAINDER TREE: " << std::endl;
+	while (level > 0) {
+		level--;
+		f_name = "p" + std::to_string(level);
+		
+		v = read_file(f_name);
+		
+		for (int j = 0; j < v.size(); j++) {
+			sqr = v[j] * v[j];
+			v[j] = P[j / 2] % sqr;
+		}
+		
+		std::cout << "LEVEL " << level << ": ";
+		for(u64 n : v) {
+			std::cout << n << ", ";
+		}
+		std::cout << std::endl;
+		
+		f_name = "r" + std::to_string(level);
+		write_file(v, f_name);
+		P = v;
+	}
+	
+	
+	
+	vec<u64> w(orig.size(), 0);
+	for (int k = 0; k < orig.size(); k++) {
+		sqr = orig[k] * orig[k];
+		w[k] = P[k / 2] % sqr;
+		w[k] = w[k] / orig[k];
+		w[k] = stein_gcd(w[k],orig[k]);
+	}
+	
+	std::cout << "GCDs " << level << ": ";
+	for(u64 n : w) {
+		std::cout << n << ", ";
+	}
+	std::cout << std::endl;
+	
+	
+	write_file(w, "output");
+	
 	
 }
 
-u64 product_tree(vec<u64> v) {
+int product_tree(vec<u64> v) {
 	
 	vec<u64> v_new(v.size(), 0);
 	u64 new_size;
-	u64 level = 0;
+	int level = 0;
+	str f_name = "p";
 	
+	std::cout << "PRODUCT TREE" << std::endl; 
 	while (v.size() > 1) {
 		new_size = (v.size() + 1) / 2;
 		v_new.resize(new_size);
@@ -85,29 +133,62 @@ u64 product_tree(vec<u64> v) {
 		if (v.size() & 1) {
 			v_new[v.size()/2] = v[v.size() - 1];
 		}
-		write_file(v_new, std::format("p{}",level) );
+		
+		std::cout << "LEVEL " << level << ": ";
+		for (u64 n : v_new) {
+			std::cout << n << ", ";
+		}
+		std::cout << std::endl;
+		
+		
+		f_name = "p" + std::to_string(level);
+		write_file(v_new, f_name);
 		v = v_new;
 		level++;
 	}
 	return level;
 }
 
+void results(vec<u64> moduli){
+	
+	vec<u64> gcds = read_file("output");
+	vec<u64> vulnerable;
+	
+	int size = 0;
+	
+	for (int i = 0; i < gcds.size(); i++) {
+		if (gcds[i] != 1) {
+			vulnerable.push_back(moduli[i]);
+		}
+	}
+	
+	std::cout << "VULNERABLE MODULI: " << std::endl;
+	for (u64 n : vulnerable) {
+		std::cout << n << ", ";
+	}
+	std::cout << std::endl;
+	
+}
 
 
 int main (int argc, char **argv) {
 	// test of the product tree algorithm
 	// Simplified using small numbers, no multithreading.
 	// convert this to use MPZ values from a file later and have multi threading
-	vec<u64> test_nums = {1517, 1591, 2627, 3589}; // all of these have the factor 37 in common
+	vec<u64> test_nums = {1517, 1591, 2627, 3589, 95477, 497009, 82919, 7289}; // all of these have the factor 37 in common
 	
+	vec<u64> test_nums_copy = {1517, 1591, 2627, 3589, 95477, 497009, 82919, 7289}; // all of these have the factor 37 in common
 	std::cout << "NUMBERS: " << std::endl; 
-	for (u64 u : test_nums) {
+	for (u64 u : test_nums_copy) {
 		std::cout << u << ", ";
 	}
 	std::cout << std::endl;
+	int levels = product_tree(test_nums_copy);
+	std::cout << "NUMBER OF LEVELS " << levels << std::endl;
 	
+	remainder_tree(levels - 1, test_nums);
 	
-	
+	results(test_nums);
 	
 	return 0;
 }
