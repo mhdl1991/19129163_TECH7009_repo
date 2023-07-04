@@ -94,13 +94,11 @@ void remainder_tree(int level, vec<u64> orig) {
 		P = v;
 	}
 	
-	
-	
 	vec<u64> w(orig.size(), 0);
 	for (int k = 0; k < orig.size(); k++) {
 		sqr = orig[k] * orig[k];
 		w[k] = P[k / 2] % sqr;
-		w[k] = w[k] / orig[k];
+		w[k] /= orig[k];
 		w[k] = stein_gcd(w[k],orig[k]);
 	}
 	
