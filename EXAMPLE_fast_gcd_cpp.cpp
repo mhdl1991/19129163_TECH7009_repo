@@ -39,12 +39,15 @@ u64 stein_gcd( u64 a, u64 b ) {
 }
 
 
+void print_vec(vec<u64> V) {
+	for (u64 n : V) { std::cout << n << ", "; } 
+	std::cout << std::endl;
+}
+
 void write_file(vec<u64> nums, str filename){
 	std::ofstream f;
 	f.open(filename);
-	for (u64 n : nums) {
-		f << n << std::endl;
-	}
+	for (u64 n : nums) { f << n << std::endl; }
 	f.close();
 	return;
 }
@@ -72,10 +75,12 @@ void remainder_tree(int level, vec<u64> orig) {
 	u64 sqr;
 	
 	std::cout << "REMAINDER TREE: " << std::endl;
+	std::cout << "LEVEL " << level << ": ";
+	print_vec(P);
+
 	while (level > 0) {
 		level--;
 		f_name = "p" + std::to_string(level);
-		
 		v = read_file(f_name);
 		
 		for (int j = 0; j < v.size(); j++) {
@@ -84,10 +89,7 @@ void remainder_tree(int level, vec<u64> orig) {
 		}
 		
 		std::cout << "LEVEL " << level << ": ";
-		for(u64 n : v) {
-			std::cout << n << ", ";
-		}
-		std::cout << std::endl;
+		print_vec(v);
 		
 		f_name = "r" + std::to_string(level);
 		write_file(v, f_name);
@@ -102,16 +104,10 @@ void remainder_tree(int level, vec<u64> orig) {
 		w[k] = stein_gcd(w[k],orig[k]);
 	}
 	
-	std::cout << "GCDs " << level << ": ";
-	for(u64 n : w) {
-		std::cout << n << ", ";
-	}
-	std::cout << std::endl;
-	
+	std::cout << "GCDs: ";
+	print_vec(w);
 	
 	write_file(w, "output");
-	
-	
 }
 
 int product_tree(vec<u64> v) {
@@ -133,11 +129,7 @@ int product_tree(vec<u64> v) {
 		}
 		
 		std::cout << "LEVEL " << level << ": ";
-		for (u64 n : v_new) {
-			std::cout << n << ", ";
-		}
-		std::cout << std::endl;
-		
+		print_vec(v);
 		
 		f_name = "p" + std::to_string(level);
 		write_file(v_new, f_name);
@@ -173,9 +165,9 @@ int main (int argc, char **argv) {
 	// test of the product tree algorithm
 	// Simplified using small numbers, no multithreading.
 	// convert this to use MPZ values from a file later and have multi threading
-	vec<u64> test_nums = {1517, 1591, 2627, 3589, 95477, 497009, 82919, 7289}; // all of these have the factor 37 in common
+	vec<u64> test_nums = {21, 15, 33, 221}; // factor 3 in common with the  first three
 	
-	vec<u64> test_nums_copy = {1517, 1591, 2627, 3589, 95477, 497009, 82919, 7289}; // all of these have the factor 37 in common
+	vec<u64> test_nums_copy = {21, 15, 33, 221};
 	std::cout << "NUMBERS: " << std::endl; 
 	for (u64 u : test_nums_copy) {
 		std::cout << u << ", ";
