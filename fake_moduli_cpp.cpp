@@ -11,25 +11,32 @@
 #include <gmpxx.h>
 
 
-void save_moduli_to_file(std::string filename, const mpz_t mod) {
-	FILE *fp;
-	fp = fopen(filename.c_str(),"w");
-	if (fp) {	
-		mpz_out_str(, 16, mod);
-	} else {
-		std::cout << "Uh oh, something went wrong." << std::endl
+void write_moduli_to_file(const std::string target_file, std::vector<mpz_class> moduli) {
+	std::ofstream f_out;
+	f_out.open(target_file);
+	for (mpz_class z : moduli) {
+		f_out << z;
 	}
-	fclose(fp);
+	f_out.close();
 	return;
 }
 
 void generate_modulus(){
+	mpz_t p1, q1, size, temp;
+    bool p_isprime = false;
+	mpz_inits(p1, q1, size, temp, 0);
+	
+	
+	
+	mpz_clears(p1,q1, size, temp, 0);
 	return;
 }
 
 int main (int argc, char **argv) {
 	// generate a bunch of fake RSA moduli for testing the product tree algorithm with
-	std::vector<std::string> filenames = {"test0","test1","test2","test3","test4","test5","test6","test7"};
+	// write them to a file
+	std::string filename = "input.mpz";
+	std::vector<mpz_class> test_moduli_vect;
 	
 
 
