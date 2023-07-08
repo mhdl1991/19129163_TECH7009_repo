@@ -71,7 +71,7 @@ int main (int argc, char **argv) {
 	
 	std::cout << "writing Test moduli to " << filename << std::endl;
 	
-	FILE* f = fopen(filename.c_str());
+	FILE* f = fopen(filename.c_str(), "w+");
 	for (mpz_class num : test_moduli_vect) {
 		gmp_fprintf(f, "%Zx", num.get_mpz_t() );
 		// f << num << std::endl;
