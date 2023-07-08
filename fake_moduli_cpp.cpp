@@ -36,7 +36,7 @@ int main (int argc, char **argv) {
 	std::vector<mpz_class> test_moduli_vect;
 	
 	int i = 0;
-	while (test_moduli_vect.size() < 7) {
+	while (test_moduli_vect.size() != 7) {
 		std::cout << "creating Test moduli #" << i << std::endl;
 		for (;;) {
 			//mpz_urandomb(p, mt, MODULUS_BSIZE);		// select a random number for p
