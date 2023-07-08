@@ -70,17 +70,17 @@ int main (int argc, char **argv) {
 	std::cout << "test vector now has " << test_moduli_vect.size() << " moduli" << std::endl;
 	
 	std::cout << "writing Test moduli to " << filename << std::endl;
-	FILE* f;
-	f.open(filename);
+	
+	FILE* f = fopen(filename);
 	for (mpz_class num : test_moduli_vect) {
 		gmp_fprintf(f, "%Zx", num.get_mpz_t() );
 		// f << num << std::endl;
 		// mpz_set(temp, num);
 		// gmp_fprintf(f, "%Zx", temp);
 	}
-	f.close();
+	fclose(f);
 													// clear GMP variables
 	mpz_clears(temp, p, q, n, 0);
-	gmp_randclear(mt);
+	//gmp_randclear(mt);
 	return 0;
 }
