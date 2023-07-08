@@ -57,7 +57,7 @@ int main (int argc, char **argv) {
 	
 	std::cout << "test vector now has " << test_moduli_vect.size() << " moduli" << std::endl;
 	
-	std::cout << "writing Test moduli to " << filename << std::endl
+	std::cout << "writing Test moduli to " << filename << std::endl;
 	std::ofstream f;
 	f.open(filename);
 	for (mpz_class num : test_moduli_vect) {
