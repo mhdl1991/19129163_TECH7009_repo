@@ -112,7 +112,7 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 
 // writes v to the named file in binary format
 void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
-	auto start = std::chrono::high_precision_clock::now();
+	auto start = std::chrono::high_resolution_clock::now();
 	std::cout << std::fixed << std::setprecision(9) << std::left;
 	
 	std::cout << "writing to " << filename << std::endl;
@@ -127,7 +127,7 @@ void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
 	}	
 	fclose(out);
 	
-	auto start = std::chrono::high_precision_clock::now();
+	auto start = std::chrono::high_resolution_clock::now();
 	auto diff = end - start;
 	double dT = std::chrono::duration<double>(diff).count();
 	std::cout << v.size() << " elements, " << bytes << " bytes in " << dT << " s" << std::endl;
