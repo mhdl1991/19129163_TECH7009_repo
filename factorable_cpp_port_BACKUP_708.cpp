@@ -79,7 +79,8 @@ void prep_hex_input(const std::string infile, const std::string outfile) {
 	double dT = std::chrono::duration<double>(diff).count();
 
 
-	std::cout << "preprocessing " << count << " elements took " << dT << " s " << std::endl;}
+	std::cout << "preprocessing " << count << " elements took " << dT << " s " << std::endl;
+}
 
 // initializes v and fills it with contents of named binary format file
 std::vector<mpz_class> input_bin_array(const std::string filename) {
