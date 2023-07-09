@@ -128,8 +128,9 @@ void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
 	fclose(out);
 	
 	auto start = std::chrono::high_precision_clock::now();
-	std::chrono::duration<double> diff = end - start;
-	std::cout << v.size() << "elements, " << bytes << "bytes in " << duration << " s" << std::endl;
+	auto diff = end - start;
+	double dT = std::chrono::duration<double>(diff).count();
+	std::cout << v.size() << " elements, " << bytes << " bytes in " << dT << " s" << std::endl;
 }
 
 
