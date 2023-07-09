@@ -120,10 +120,11 @@ void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
 	FILE* out = fopen(filename.c_str(), "wb");
 	assert(out);
 	
-	fwrite(v.size(), sizeof(v.size()), 1, out);
+	int count = v.size();
+	fwrite(&count, sizeof(count), 1, out);
 	size_t bytes = 0;
 	for (mpz_class num : v) {
-		bytes += __mpz_out_raw(out, num.get_mpz_t());
+		bytes += __gmpz_out_raw(out, num.get_mpz_t());
 	}	
 	fclose(out);
 	
