@@ -37,13 +37,7 @@
 
 
 // test if file exists
-<<<<<<< HEAD
-bool file_exists(const std::string filename) {
-	return std::filesystem::exists(filename);
-}
-=======
 bool file_exists(std::string filename) { return fs::exists(filename); }
->>>>>>> 783fa04e09f74c2cea34ecb2f6230dac4eb23458
 
 // read hex strings from infile and write final count followed by gmp
 // binary format values to output
