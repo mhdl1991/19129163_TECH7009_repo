@@ -12,20 +12,19 @@
 #include<gmpxx.h>
 
 #define NTHREADS 4
-#define vec std::vector
 
 #define INPUT_FN    "input.mpz"
 #define OUTPUT_FN   "output.mpz"
 
 
 // test if file exists
-bool file_exists(std::string filename) {
+bool file_exists(const std::string filename) {
 	return std::filesystem::exists(filename);
 }
 
 // read hex strings from infile and write final count followed by gmp
 // binary format values to output
-void prep_hex_input(std::string infile, std::string outfile) {
+void prep_hex_input(const std::string infile, const std::string outfile) {
 	FILE* in = fopen(infile.c_str(), "r");
 	FILE* out = fopen (outfile.c_str(), "wb");
 	int res, count = 0;
@@ -57,6 +56,7 @@ void prep_hex_input(std::string infile, std::string outfile) {
 	std::cout << "preprocessing " << count << " elements took " << diff << " s";
 }
 
+// initializes v and fills it with contents of named binary format file
 std::vector<mpz_class> input_bin_array(const std::string filename) {
 	auto start = std::chrono::high_precision_clock::now();
 	
@@ -89,6 +89,32 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 	fclose(in);
 	return v;
 }
+
+// writes v to the named file in binary format
+void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
+	auto start = std::chrono::high_precision_clock::now();
+	std::cout << std::fixed << std::setprecision(9) << std::left;
+	
+	std::cout << "writing to " << filename << std::endl;
+	
+	FILE* out = fopen(filename.c_str(), "wb");
+	assert(out);
+	
+	fwrite(v.size(), sizeof(v.size()), 1, out);
+	size_t bytes = 0;
+	for (mpz_class num : v) {
+		bytes += __mpz_out_raw(out, num.get_mpz_t());
+	}	
+	fclose(out);
+	
+	auto start = std::chrono::high_precision_clock::now();
+	std::chrono::duration<double> diff = end - start;
+	std::cout << v.size() << "elements, " << bytes << "bytes in " << duration << " s" << std::endl;
+}
+
+
+
+
 
 void iter_threads(int start, int end, std::function<void(int)> func) {
 	int n = start;
