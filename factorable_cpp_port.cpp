@@ -8,19 +8,21 @@
 #include<mutex>
 #include<cassert>
 
+
+// for the file system library/header
 #ifndef __has_include
-  static_assert(false, "__has_include not supported");
+	static_assert(false, "__has_include not supported");
 #else
-#  if __has_include(<filesystem>)
-#    include <filesystem>
-     namespace fs = std::filesystem;
-#  elif __has_include(<experimental/filesystem>)
-#    include <experimental/filesystem>
-     namespace fs = std::experimental::filesystem;
-#  elif __has_include(<boost/filesystem.hpp>)
-#    include <boost/filesystem.hpp>
-     namespace fs = boost::filesystem;
-#  endif
+#if __has_include(<filesystem>)
+#include <filesystem>
+	namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+	namespace fs = std::experimental::filesystem;
+#elif __has_include(<boost/filesystem.hpp>)
+#include <boost/filesystem.hpp>
+	namespace fs = boost::filesystem;
+#endif
 #endif
 
 #include<chrono>
@@ -36,9 +38,7 @@
 
 
 // test if file exists
-bool file_exists(std::string filename) {
-	return fs::exists(filename);
-}
+bool file_exists(std::string filename) { return fs::exists(filename); }
 
 // read hex strings from infile and write final count followed by gmp
 // binary format values to output
@@ -90,7 +90,7 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 	assert(ret == 1);
 	assert(count >= 0);
 	
-	std::vector<mpz_class> v(count);
+	std::vector<mpz_class> v;
 	mpz_t temp;
 	mpz_init(temp);
 	
@@ -105,7 +105,7 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 	auto diff = end - start;
 	double dT = std::chrono::duration<double>(diff).count();
 	
-	std::cout << v.size() << "elements, " << bytes << "bytes in " << dT << " s" << std::endl;
+	std::cout << v.size() << " elements, " << bytes << "bytes in " << dT << " s" << std::endl;
 	
 	fclose(in);
 	return v;
