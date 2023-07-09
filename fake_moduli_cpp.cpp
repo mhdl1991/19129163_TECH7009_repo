@@ -14,74 +14,58 @@
 
 
 int main (int argc, char **argv) {
-													// initialize the RNG and seed it
-	//gmp_randstate_t mt;
-	//gmp_randinit_mt(mt);
-    //gmp_randseed_ui(mt,(unsigned int)time(NULL) );
+	// initialize the RNG and seed it
 	gmp_randclass mt(gmp_randinit_mt);
 	mt.seed( (unsigned int)time(NULL) );
 	
-													// GMP library variables
-	mpz_t temp, p, q, n;
-	mpz_inits(temp, p, q, n, 0);
-	
-	mpz_class p_, q_, n_;
-	
-	
+	// GMP library variables
+	mpz_class p, q, n;
 	bool p_isprime = false, q_isprime = false;
-													// generate a bunch of fake RSA moduli 
-													// for testing the product tree algorithm with
-													// write them to a file
+	
+	// generate a bunch of fake RSA moduli 
+	// for testing the product tree algorithm with
+	// write them to a file
 	std::string filename = "input.mpz";
 	std::vector<mpz_class> test_moduli_vect;
-	
 	int i = 0;
 	while (test_moduli_vect.size() != 7) {
 		std::cout << "creating Test moduli #" << i << std::endl;
 		for (;;) {
-			//mpz_urandomb(p, mt, MODULUS_BSIZE);		// select a random number for p
-			//mpz_urandomb(q, mt, MODULUS_BSIZE);		// select a random number for q
-			p_ = mt.get_z_bits(MODULUS_BSIZE);
-			q_ = mt.get_z_bits(MODULUS_BSIZE);
-			p_isprime = mpz_probab_prime_p(p_.get_mpz_t(), 10); 	// make sure p is prime
-			q_isprime = mpz_probab_prime_p(q_.get_mpz_t(), 10);  // make sure q is prime
-			if (p_isprime && q_isprime) {break;} 	// p, q must both be prime
+			// create two random numbers
+			// check if they are both probable primes.
+			p = mt.get_z_bits(MODULUS_BSIZE);
+			q = mt.get_z_bits(MODULUS_BSIZE);
+			p_isprime = mpz_probab_prime_p(p.get_mpz_t(), 10); 	
+			q_isprime = mpz_probab_prime_p(q.get_mpz_t(), 10);
+			if (p_isprime && q_isprime) {break;} 	
 		}
+		// put the moduli in a file
 		std::cout << "created Test moduli #" << i << std::endl;
-		//mpz_mul(n, p, q);							// multiply p and q to make a moduli
-		n_ = p_ * q_;
-		test_moduli_vect.push_back(n_); // create a mpz_class instance of value n, put it in the vector
+		n = p * q;
+		test_moduli_vect.push_back(n); 
 		i++;
 	}
-													// create an additional modulus with a shared factor
+	
+	// create an additional modulus with a shared factor
 	std::cout << "creating Test moduli #" << i << std::endl;
 	for (;;) {
-		//mpz_urandomb(q, mt, MODULUS_BSIZE);
-		q_ = mt.get_z_bits(MODULUS_BSIZE);
-		q_isprime = mpz_probab_prime_p(q_.get_mpz_t(), 10);
+		q = mt.get_z_bits(MODULUS_BSIZE);
+		q_isprime = mpz_probab_prime_p(q.get_mpz_t(), 10);
 		if (q_isprime) {break;}
 	}
 	std::cout << "created Test moduli #" << i << std::endl;
-	//mpz_mul(n, p, q);								// multiply p and q to make a moduli
-	n_ = p_ * q_;
-	test_moduli_vect.push_back( n_ ); 	// create a mpz_class instance of value n, put it in the vector
-	i++;
+	n = p * q;
+	test_moduli_vect.push_back( n );
 	
 	std::cout << "test vector now has " << test_moduli_vect.size() << " moduli" << std::endl;
-	
 	std::cout << "writing Test moduli to " << filename << std::endl;
 	
+	// write test moduli to file as hex strings.
 	FILE* f = fopen(filename.c_str(), "w+");
 	for (mpz_class num : test_moduli_vect) {
 		gmp_fprintf(f, "%Zx", num.get_mpz_t() );
 		fprintf(f,"\n");
-		// f << num << std::endl;
-		// mpz_set(temp, num);
-		// gmp_fprintf(f, "%Zx", temp);
 	}
-	fclose(f);
-													// clear GMP variables
-	mpz_clears(temp, p, q, n, 0);
-	//gmp_randclear(mt);
+	fclose(f);	
 	return 0;
 }
