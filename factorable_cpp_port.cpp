@@ -1,11 +1,28 @@
+// build this on Kali Linux and presumably Lubuntu using the command
+// g++ -std=c++20 factorable_cpp_port.cpp -o factorable_cpp_port.o -lgmp -lgmpxx -pthread
 #include<iostream>
 #include<fstream>
 #include<vector>
 #include<string>
 #include<thread>
 #include<mutex>
-#include<assert>
-#include<filesystem>
+#include<cassert>
+
+#ifndef __has_include
+  static_assert(false, "__has_include not supported");
+#else
+#  if __has_include(<filesystem>)
+#    include <filesystem>
+     namespace fs = std::filesystem;
+#  elif __has_include(<experimental/filesystem>)
+#    include <experimental/filesystem>
+     namespace fs = std::experimental::filesystem;
+#  elif __has_include(<boost/filesystem.hpp>)
+#    include <boost/filesystem.hpp>
+     namespace fs = boost::filesystem;
+#  endif
+#endif
+
 #include<chrono>
 
 #include<gmp.h>
@@ -20,7 +37,7 @@
 
 // test if file exists
 bool file_exists(std::string filename) {
-	return std::filesystem::exists(filename);
+	return fs::exists(filename);
 }
 
 // read hex strings from infile and write final count followed by gmp
@@ -31,7 +48,7 @@ void prep_hex_input(std::string infile, std::string outfile) {
 	int res, count = 0;
 	mpz_class x;
 	
-	auto start = std::chrono::high_precision_clock::now();
+	auto start = std::chrono::high_resolution_clock::now();
 	
 	std::cout << std::fixed << std::setprecision(9) << std::left;
 	std::cout << "preprocessing input from " << infile << std::endl;
@@ -44,7 +61,7 @@ void prep_hex_input(std::string infile, std::string outfile) {
 			std::cout << "invalid input" << std::endl;
 			exit(1);
 		}
-		__mpz_out_raw(out, x.get_mpz_t())
+		__gmpz_out_raw(out, x.get_mpz_t());
 		count++;
 	}
 	fclose(in);
@@ -52,13 +69,16 @@ void prep_hex_input(std::string infile, std::string outfile) {
 	fwrite(&count, sizeof(count), 1, out);
 	fclose(out);
 	
-	auto end = std::chrono::high_precision_clock::now();
-	std::chrono::duration<double> diff = end - start;
-	std::cout << "preprocessing " << count << " elements took " << diff << " s";
+	auto end = std::chrono::high_resolution_clock::now();
+	auto diff = end - start;
+	double dT = std::chrono::duration<double>(diff).count();
+
+
+	std::cout << "preprocessing " << count << " elements took " << dT << " s";
 }
 
 std::vector<mpz_class> input_bin_array(const std::string filename) {
-	auto start = std::chrono::high_precision_clock::now();
+	auto start = std::chrono::high_resolution_clock::now();
 	
 	std::cout << std::fixed << std::setprecision(9) << std::left;
 	std::cout << "reading " << filename << " ..." << std::endl;
@@ -76,15 +96,16 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 	
 	size_t bytes;
 	for (int i = 0; i < count; i++){
-		bytes += __mpz_inp_raw(temp, in);
+		bytes += __gmpz_inp_raw(temp, in);
 		v.push_back( mpz_class(temp) );
 	}
 
 	mpz_clear(temp);
-	auto end = std::chrono::high_precision_clock::now();
-	std::chrono::duration<double> diff = end - start;
+	auto end = std::chrono::high_resolution_clock::now();
+	auto diff = end - start;
+	double dT = std::chrono::duration<double>(diff).count();
 	
-	std::cout << v.size() << "elements, " << bytes << "bytes in " << duration << " s" << std::endl;
+	std::cout << v.size() << "elements, " << bytes << "bytes in " << dT << " s" << std::endl;
 	
 	fclose(in);
 	return v;
@@ -101,7 +122,7 @@ void iter_threads(int start, int end, std::function<void(int)> func) {
 			func(i);
 		}
 	};
-	VEC<std::thread> threads;
+	std::vector<std::thread> threads;
 	for (int j = 0; j < NTHREADS; j++) {threads.emplace_back(thread_body, nullptr);}
 	for (std::thread &t : threads) {t.join();}
 }
