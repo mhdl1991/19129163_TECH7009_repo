@@ -134,10 +134,31 @@ void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
 	std::cout << v.size() << " elements, " << bytes << " bytes in " << dT << " s" << std::endl;
 }
 
+// writes v to the named file as lines of hex strings
+void output_hex_array(std::vector<mpz_class> v, const std::string filename) {
+	std::cout << "writing " << filename << "... " << std::endl;
+	FILE* out = fopen(filename.c_str(), "w");
+	assert(out);
+	for (mpz_class num : v) {
+		gmp_fprintf(out, "%Zx\n", num.get_mpz_t());
+	}
+	fclose(out);
+	std::cout << "ok!" << std::endl;
+}
 
 
+// sort and uniquify vector
+void uniq (std::vector<mpz_class> v){
+	std::sort(
+		v.begin(), 
+		v.end(), 
+		[](const mpz_class a, const mpz_class b) { return mpz_cmp( a.get_mpz_t(), b.get_mpz_t() );}
+	);
+		
+}
 
-
+// executes func(n) over the range [start, end) using NTHREADS worker threads
+// make sure func(n) is thread-safe
 void iter_threads(int start, int end, std::function<void(int)> func) {
 	int n = start;
 	std::mutex m;
@@ -153,6 +174,47 @@ void iter_threads(int start, int end, std::function<void(int)> func) {
 	for (int j = 0; j < NTHREADS; j++) {threads.emplace_back(thread_body, nullptr);}
 	for (std::thread &t : threads) {t.join();}
 }
+
+int product_tree() {
+	std::vector<mpz_class> v = input_bin_array(INPUT_FN), w;
+	std::string filename;
+	int size = 0, level = 0;
+	double dT;
+	auto tstart = std::chrono::high_resolution_clock::now();
+
+	std::cout << std::fixed << std::setprecision(9) << std::left;
+	std::cout << "multiplying numbers... "  << std::endl;	
+	while (v.size() > 1) {
+		auto start = std::chrono::high_resolution_clock::now();
+		std::cout << "level " << level << std::endl;
+		size = (v.size() + 1) / 2;
+		auto mul_job = [&](int k){
+			w[k] = v[2*k] * v[(2*k)+1];		
+		}
+		iter_threads(0, v.size()/2, mul_job);
+		if (v.size() & 1) { w[v.size()/2] = v[v.size()-1]; }
+		
+		filename = "p" + std::to_string(level) + ".mpz";
+		output_bin_array(w, filename);
+		v = w;
+		level++;
+
+		auto end = std::chrono::high_resolution_clock::now();
+		auto diff = end - start;
+		dT = std::chrono::duration<double>(diff).count();
+		std::cout << dT << " s" << std::endl;
+	}
+
+	auto end = std::chrono::high_resolution_clock::now();
+	auto diff = end - tstart;
+	dT = std::chrono::duration<double>(diff).count();
+
+	std::cout << "the product tree took " << dT << " seconds" << std::endl;
+	return level;
+}
+
+
+
 
 int main (int argc, char** argv) {
 	// test...
