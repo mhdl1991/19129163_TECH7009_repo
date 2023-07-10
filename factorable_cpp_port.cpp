@@ -1,5 +1,5 @@
-// build this on Kali Linux and presumably Lubuntu using the command
-// g++ -std=c++20 factorable_cpp_port.cpp -o factorable_cpp_port.o -lgmp -lgmpxx -pthread
+// built this on Kali Linux and presumably Lubuntu using the command
+// g++ -std=c++20 factorable_cpp_port.cpp -o -Wall fastgcd -lgmp -lgmpxx -pthread
 
 // -- Efficient implementation of all-pairs GCD
 // original program fastgcd.c by:
@@ -40,14 +40,16 @@
 #endif
 
 #include<chrono>
-
 #include<gmp.h>
 #include<gmpxx.h>
 
+// move all macros here
 #define NTHREADS 4
-
 #define INPUT_FN    "input.mpz"
 #define OUTPUT_FN   "output.mpz"
+#define NOW std::chrono::high_resolution_clock::now();
+#define TIME_ELAPSED std::chrono::duration<double>(diff).count();
+#define counter unsigned long
 
 
 // test if file exists
@@ -61,13 +63,13 @@ void prep_hex_input(const std::string infile, const std::string outfile) {
 	int res, count = 0;
 	mpz_class x;
 	
-	auto start = std::chrono::high_resolution_clock::now();
+	auto start = NOW;
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	std::cerr << "preprocessing input from " << infile << std::endl;
 	
 	fwrite(&count, sizeof(count), 1, out); // ???
 	for (;;) {
-		int res = gmp_fscanf(in, "%Zx", x.get_mpz_t());
+		res = gmp_fscanf(in, "%Zx", x.get_mpz_t());
 		if (res == EOF) {break;}
 		if (res != 1) {
 			std::cerr << "invalid input" << std::endl;
@@ -81,16 +83,16 @@ void prep_hex_input(const std::string infile, const std::string outfile) {
 	fwrite(&count, sizeof(count), 1, out);
 	fclose(out);
 	
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - start;
-	double dT = std::chrono::duration<double>(diff).count();
+	double dT = TIME_ELAPSED;
 
 
 	std::cerr << "preprocessing " << count << " elements took " << dT << " s " << std::endl;}
 
 // initializes v and fills it with contents of named binary format file
 std::vector<mpz_class> input_bin_array(const std::string filename) {
-	auto start = std::chrono::high_resolution_clock::now();
+	auto start = NOW;
 	
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	std::cerr << "reading " << filename << " ..." << std::endl;
@@ -113,9 +115,9 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 	}
 
 	mpz_clear(temp);
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - start;
-	double dT = std::chrono::duration<double>(diff).count();
+	double dT = TIME_ELAPSED;
 	
 	std::cerr << v.size() << " elements, " << bytes << "bytes in " << dT << " s" << std::endl;
 	
@@ -125,7 +127,7 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 
 // writes v to the named file in binary format
 void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
-	auto start = std::chrono::high_resolution_clock::now();
+	auto start = NOW;
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	
 	std::cerr << "writing to " << filename << std::endl;
@@ -141,9 +143,9 @@ void output_bin_array(std::vector<mpz_class> v, const std::string filename) {
 	}	
 	fclose(out);
 	
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - start;
-	double dT = std::chrono::duration<double>(diff).count();
+	double dT = TIME_ELAPSED;
 	std::cerr << v.size() << " elements, " << bytes << " bytes in " << dT << " s" << std::endl;
 }
 
@@ -191,16 +193,17 @@ void iter_threads(int start, int end, std::function<void(int)> func) {
 int product_tree() {
 	std::vector<mpz_class> v = input_bin_array(INPUT_FN), w;
 	std::string filename;
-	int size = 0, level = 0;
+	int size, level = 0;
 	double dT;
 	auto tstart = std::chrono::high_resolution_clock::now();
 
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	std::cerr << "multiplying numbers... "  << std::endl;	
 	while (v.size() > 1) {
-		auto start = std::chrono::high_resolution_clock::now();
+		auto start = NOW;
 		std::cerr << "level " << level << std::endl;
 		size = (v.size() + 1) / 2;
+		w.resize(size);
 		auto mul_job = [&](int k){
 			w[k] = v[2*k] * v[(2*k)+1];		
 		};
@@ -212,15 +215,15 @@ int product_tree() {
 		v = w;
 		level++;
 
-		auto end = std::chrono::high_resolution_clock::now();
+		auto end = NOW;
 		auto diff = end - start;
-		dT = std::chrono::duration<double>(diff).count();
+		dT = TIME_ELAPSED;
 		std::cerr << dT << " s" << std::endl;
 	}
 
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - tstart;
-	dT = std::chrono::duration<double>(diff).count();
+	dT = TIME_ELAPSED;
 
 	std::cerr << "the product tree took " << dT << " seconds" << std::endl;
 	return level;
@@ -228,7 +231,7 @@ int product_tree() {
 
 void remainder_tree(int level){
 	std::vector<mpz_class> P, v = input_bin_array(INPUT_FN), w;
-	int size = 0;
+	//int size = 0;
 	double dT;
 	auto tstart = std::chrono::high_resolution_clock::now();
 	std::string filename = "p" + std::to_string(level) + ".mpz";
@@ -239,7 +242,7 @@ void remainder_tree(int level){
 	P = input_bin_array(filename);
 
 	while (level > 0) {
-		auto start = std::chrono::high_resolution_clock::now();
+		auto start = NOW;
 		std::cerr << "level " << level << std::endl;
 		level--;
 		filename = "p" + std::to_string(level) + ".mpz";
@@ -255,13 +258,13 @@ void remainder_tree(int level){
 		output_bin_array(v, name);
 		#endif
 		P = v;
-		auto end = std::chrono::high_resolution_clock::now();
-		auto diff = end - tstart;
-		dT = std::chrono::duration<double>(diff).count();
+		auto end = NOW;
+		auto diff = end - start;
+		dT = TIME_ELAPSED;
 		std::cerr << dT << " s" << std::endl;
 	}
 	// final round
-	auto start = std::chrono::high_resolution_clock::now();
+	auto start = NOW;
 	std::cerr << "output" << std::endl;
 	v = input_bin_array(INPUT_FN);
 	
@@ -273,14 +276,14 @@ void remainder_tree(int level){
 	};
 	iter_threads(0, v.size(), muldiv_job);
 	output_bin_array(w, OUTPUT_FN);
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - start;
 	dT = std::chrono::duration<double>(diff).count();
 	std::cerr << dT << " s" << std::endl;
 
 	end = std::chrono::high_resolution_clock::now();
 	diff = end - tstart;
-	dT = std::chrono::duration<double>(diff).count();
+	dT = TIME_ELAPSED;
 	std::cerr << "Remainder tree took " << dT << " s" << std::endl;
 }
 
@@ -288,29 +291,29 @@ void emit_results(){
 	std::vector<mpz_class> moduli = input_bin_array(INPUT_FN);
 	std::vector<mpz_class> gcds = input_bin_array(OUTPUT_FN);
 	double dT;
-	auto start = std::chrono::high_resolution_clock::now();
+	auto start = NOW;
 
 	std::cerr << "emitting results" << std::endl;
 
 
 	int size = 0;
-	for (int i = 0; i < gcds.size(); i++) {
+	for (counter i = 0; i < gcds.size(); i++) {
 		if (gcds[i] == 1) {
 			moduli[i] = moduli[size];
 			gcds[size] = gcds[i];
 			size++;
 		}	
 	}	
-	for (int i = size; i < gcds.size(); i++) {
+	for (counter i = size; i < gcds.size(); i++) {
 		mpz_clear( moduli[i].get_mpz_t() );
 		mpz_clear( gcds[i].get_mpz_t() );
 	}
 	output_hex_array(moduli, "weak_moduli");
 	output_hex_array(gcds, "gcds");
 
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - start;
-	dT = std::chrono::duration<double>(diff).count();
+	dT = TIME_ELAPSED;
 	std::cerr << "emitting " << size << " results took " << dT << " seconds" << std::endl;
 		
 }
@@ -320,8 +323,7 @@ void emit_results(){
 
 int main (int argc, char** argv) {
 	double dT;
-	auto start = std::chrono::high_resolution_clock::now();
-
+	auto start = NOW;
 
 	if (argc != 2) {
 		std::cerr << "usage: " << argv[0] << " INPUT | --resume" << std::endl;
@@ -343,9 +345,9 @@ int main (int argc, char** argv) {
 	int level = product_tree();
 	remainder_tree(level-1);
 	emit_results();
-	auto end = std::chrono::high_resolution_clock::now();
+	auto end = NOW;
 	auto diff = end - start;
-	dT = std::chrono::duration<double>(diff).count();
+	dT = TIME_ELAPSED;
 	std::cerr << "run took " << dT << " s" << std::endl;
 	return 0;
 }
