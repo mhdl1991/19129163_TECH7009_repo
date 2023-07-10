@@ -1,5 +1,19 @@
 // build this on Kali Linux and presumably Lubuntu using the command
 // g++ -std=c++20 factorable_cpp_port.cpp -o factorable_cpp_port.o -lgmp -lgmpxx -pthread
+
+// -- Efficient implementation of all-pairs GCD
+// original program fastgcd.c by:
+// NH,AH 2012/03
+
+// C++ version by
+// MK 2023
+
+
+// Usage: 
+//   fastgcd INPUT
+//   (where INPUT is a file containing hex-encoded RSA moduli)
+//
+
 #include<iostream>
 #include<fstream>
 #include<vector>
@@ -48,7 +62,6 @@ void prep_hex_input(const std::string infile, const std::string outfile) {
 	mpz_class x;
 	
 	auto start = std::chrono::high_resolution_clock::now();
-	
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	std::cerr << "preprocessing input from " << infile << std::endl;
 	
