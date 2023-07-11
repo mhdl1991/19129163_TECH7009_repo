@@ -62,7 +62,7 @@ void prep_hex_input(const std::string infile, const std::string outfile){
 	FILE* out;
 	int count = 0;
 	std::vector<mpz_class> temp_vec;
-	std::string temp_string;
+	std::string temp_string, temp2;
 	
 	auto start = NOW;
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
@@ -70,6 +70,9 @@ void prep_hex_input(const std::string infile, const std::string outfile){
 	
 	// read strings from infile
 	while( std::getline(in, temp_string) ) {
+		temp2 = temp_string(0, 12);
+		std::cout << "hex string " << temp2 << "... " << std::endl;
+		
 		temp_vec.push_back( mpz_class(temp_string, 16) );
 		count++;
 	}
