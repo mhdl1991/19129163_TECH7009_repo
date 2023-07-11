@@ -57,7 +57,8 @@ bool file_exists(std::string filename) { return fs::exists(filename); }
 
 // read hex strings from infile and write final count followed by gmp
 // binary format values to output
-void prep_hex_input(const std::string infile, const std::string outfile){
+// this version is slower, do not use.
+void prep_hex_input_REJECT(const std::string infile, const std::string outfile){
 	std::ifstream in(infile);
 	FILE* out;
 	int count = 0;
@@ -93,12 +94,15 @@ void prep_hex_input(const std::string infile, const std::string outfile){
 
 
 
-
-void prep_hex_input_OLD(const std::string infile, const std::string outfile) {
+// read hex strings from infile and write final count followed by gmp
+// binary format values to output
+// this version is faster but uses more C style code.
+void prep_hex_input(const std::string infile, const std::string outfile) {
 	FILE* in = fopen(infile.c_str(), "r");
 	FILE* out = fopen (outfile.c_str(), "wb");
 	int res, count = 0;
-	mpz_class x;
+	mpz_t x;
+	mpz_init(x);
 	
 	auto start = NOW;
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
@@ -106,13 +110,13 @@ void prep_hex_input_OLD(const std::string infile, const std::string outfile) {
 	
 	fwrite(&count, sizeof(count), 1, out); // ???
 	for (;;) {
-		res = gmp_fscanf(in, "%Zx", x.get_mpz_t());
+		res = gmp_fscanf(in, "%Zx", x);
 		if (res == EOF) {break;}
 		if (res != 1) {
 			std::cerr << "invalid input" << std::endl;
 			exit(1);
 		}
-		__gmpz_out_raw(out, x.get_mpz_t());
+		__gmpz_out_raw(out, x);
 		count++;
 	}
 	fclose(in);
@@ -124,6 +128,7 @@ void prep_hex_input_OLD(const std::string infile, const std::string outfile) {
 	auto diff = end - start;
 	double dT = TIME_ELAPSED;
 	std::cerr << "preprocessing " << count << " elements took " << dT << " s " << std::endl;
+	mpz_clear(x);
 }
 
 // initializes v and fills it with contents of named binary format file
@@ -351,7 +356,6 @@ void emit_results(){
 	auto diff = end - start;
 	dT = TIME_ELAPSED;
 	std::cerr << "emitting " << size << " results took " << dT << " seconds" << std::endl;
-		
 }
 
 
