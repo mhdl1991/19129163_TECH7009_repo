@@ -81,7 +81,7 @@ void prep_hex_input(const std::string infile, const std::string outfile){
 	for (mpz_class x: temp_vec) {
 		__gmpz_out_raw(out, x.get_mpz_t());
 	}
-	out.close();
+	fclose(out);
 	
 	auto end = NOW;
 	auto diff = end - start;
