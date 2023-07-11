@@ -62,18 +62,17 @@ void prep_hex_input(const std::string infile, const std::string outfile){
 	FILE* out;
 	int count = 0;
 	std::vector<mpz_class> temp_vec;
-	std::string temp_string, temp2;
+	std::string temp1, temp2;
 	
 	auto start = NOW;
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	std::cerr << "preprocessing input from " << infile << std::endl;
 	
 	// read strings from infile
-	while( std::getline(in, temp_string) ) {
-		temp2 = temp_string.substr(0, 12);
+	while( std::getline(in, temp1) ) {
+		temp2 = temp1.substr(0, 12);
 		std::cout << "hex string " << temp2 << "... " << std::endl;
-		
-		temp_vec.push_back( mpz_class(temp_string, 16) );
+		temp_vec.push_back( mpz_class(temp1, 16) );
 		count++;
 	}
 	in.close();
