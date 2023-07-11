@@ -57,7 +57,42 @@ bool file_exists(std::string filename) { return fs::exists(filename); }
 
 // read hex strings from infile and write final count followed by gmp
 // binary format values to output
-void prep_hex_input(const std::string infile, const std::string outfile) {
+void prep_hex_input(const std::string infile, const std::string outfile){
+	std::ifstream in(infile);
+	FILE* out;
+	int count = 0;
+	std::vector<mpz_class> temp_vec;
+	std::string temp_string;
+	
+	auto start = NOW;
+	std::cerr << std::fixed << std::setprecision(9) << std::left;
+	std::cerr << "preprocessing input from " << infile << std::endl;
+	
+	// read strings from infile
+	while( std::getline(in, temp_string) ) {
+		temp_vec.push_back( mpz_class(temp_string, 16) );
+		count++;
+	}
+	in.close();
+	
+	// write to outfile as binary values
+	out = fopen (outfile.c_str(), "wb");
+	fwrite(&count, sizeof(count), 1, out);
+	for (mpz_class x: temp_vec) {
+		__gmpz_out_raw(out, x.get_mpz_t());
+	}
+	out.close();
+	
+	auto end = NOW;
+	auto diff = end - start;
+	double dT = TIME_ELAPSED;
+	std::cerr << "preprocessing " << count << " elements took " << dT << " s " << std::endl;
+}
+
+
+
+
+void prep_hex_input_OLD(const std::string infile, const std::string outfile) {
 	FILE* in = fopen(infile.c_str(), "r");
 	FILE* out = fopen (outfile.c_str(), "wb");
 	int res, count = 0;
@@ -86,9 +121,8 @@ void prep_hex_input(const std::string infile, const std::string outfile) {
 	auto end = NOW;
 	auto diff = end - start;
 	double dT = TIME_ELAPSED;
-
-
-	std::cerr << "preprocessing " << count << " elements took " << dT << " s " << std::endl;}
+	std::cerr << "preprocessing " << count << " elements took " << dT << " s " << std::endl;
+}
 
 // initializes v and fills it with contents of named binary format file
 std::vector<mpz_class> input_bin_array(const std::string filename) {
