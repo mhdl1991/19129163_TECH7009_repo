@@ -276,7 +276,7 @@ void remainder_tree(int level){
 	double dT;
 	auto tstart = std::chrono::high_resolution_clock::now();
 	std::string filename = "p" + std::to_string(level) + ".mpz";
-	mpz_class s;
+	mpz_class s, temp;
 
 	std::cerr << std::fixed << std::setprecision(9) << std::left;
 	std::cerr << "computing remainder tree... "  << std::endl;	
@@ -312,7 +312,9 @@ void remainder_tree(int level){
 	auto muldiv_job = [&](int k) {
 		s = v[k] * v[k];
 		w[k] = P[k / 2] % s;
-		w[k] = w[l] / v[k];
+		temp = w[k] / v[k];
+		w[k] = temp;		
+		//mpz_divexact( w[k].get_mpz_t(), w[k].get_mpz_t(), v[k].get_mpz_t() );
 		mpz_gcd(w[k].get_mpz_t(), w[k].get_mpz_t(), v[k].get_mpz_t());
 	};
 	iter_threads(0, v.size(), muldiv_job);
