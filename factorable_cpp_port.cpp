@@ -312,7 +312,7 @@ void remainder_tree(int level){
 	auto muldiv_job = [&](int k) {
 		s = v[k] * v[k];
 		w[k] = P[k / 2] % s;
-		w[k] /= v[k];
+		w[k] = w[l] / v[k];
 		mpz_gcd(w[k].get_mpz_t(), w[k].get_mpz_t(), v[k].get_mpz_t());
 	};
 	iter_threads(0, v.size(), muldiv_job);
