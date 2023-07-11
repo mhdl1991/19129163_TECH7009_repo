@@ -44,6 +44,7 @@
 #include<gmpxx.h>
 
 // move all macros here
+#define OUTPUT_REMAINDER_LEVELS
 #define NTHREADS 4
 #define INPUT_FN    "input.mpz"
 #define OUTPUT_FN   "output.mpz"
@@ -296,7 +297,7 @@ void remainder_tree(int level){
 		iter_threads(0, v.size(), mul_job);
 		#ifdef OUTPUT_REMAINDER_LEVELS
 		filename = "r" + std::to_string(level) + ".mpz";
-		output_bin_array(v, name);
+		output_bin_array(v, filename);
 		#endif
 		P = v;
 		auto end = NOW;
