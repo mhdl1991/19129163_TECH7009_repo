@@ -11,7 +11,7 @@
 
 // Usage: 
 //   fastgcd INPUT
-//   (where INPUT is a file containing hex-encoded RSA moduli)
+//   (where INPUT is a file containing hexadecimal strings that represent RSA keys/moduli)
 //
 
 #include<iostream>
@@ -21,7 +21,9 @@
 #include<thread>
 #include<mutex>
 #include<cassert>
-
+#include<chrono>
+#include<gmp.h>
+#include<gmpxx.h>
 
 // for the file system library/header
 #ifndef __has_include
@@ -39,16 +41,14 @@
 #endif
 #endif
 
-#include<chrono>
-#include<gmp.h>
-#include<gmpxx.h>
-
 // move all macros here
 #define OUTPUT_REMAINDER_LEVELS
-#define NTHREADS 4
+#define NTHREADS 8 // number of worker threads. Originally set to 4
 #define INPUT_FN    "input.mpz"
 #define OUTPUT_FN   "output.mpz"
-#define NOW std::chrono::high_resolution_clock::now();
+
+// timing functions
+#define NOW std::chrono::high_resolution_clock::now(); 
 #define TIME_ELAPSED std::chrono::duration<double>(diff).count();
 #define counter unsigned long
 
