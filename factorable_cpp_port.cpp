@@ -1,5 +1,5 @@
 // built this on Kali Linux and presumably Lubuntu using the command
-// g++ -std=c++20 factorable_cpp_port.cpp -o -Wall fastgcd -lgmp -lgmpxx -pthread
+// g++ -std=c++20 -Wall factorable_cpp_port.cpp -o fastgcd -lgmp -lgmpxx -pthread
 
 // -- Efficient implementation of all-pairs GCD
 // original program fastgcd.c by:
@@ -94,7 +94,6 @@ void prep_hex_input_REJECT(const std::string infile, const std::string outfile){
 }
 
 
-
 // read hex strings from infile and write final count followed by gmp
 // binary format values to output
 // this version is faster but uses more C style code.
@@ -142,14 +141,11 @@ std::vector<mpz_class> input_bin_array(const std::string filename) {
 	assert(in);
 	int count;
 	int ret = fread(&count, sizeof(count), 1, in);
-	
 	assert(ret == 1);
 	assert(count >= 0);
-	
 	std::vector<mpz_class> v;
 	mpz_t temp;
 	mpz_init(temp);
-	
 	size_t bytes;
 	for (int i = 0; i < count; i++){
 		bytes += __gmpz_inp_raw(temp, in);
@@ -205,14 +201,15 @@ void output_hex_array(std::vector<mpz_class> v, const std::string filename) {
 
 
 // sort and uniquify vector
-void uniq (std::vector<mpz_class> v){
+// this kinda isn't being used right now?
+/*void uniq (std::vector<mpz_class> v){
 	std::sort(
 		v.begin(), 
 		v.end(), 
 		[](const mpz_class a, const mpz_class b) { return mpz_cmp( a.get_mpz_t(), b.get_mpz_t() );}
 	);
 		
-}
+}*/
 
 // executes func(n) over the range [start, end) using NTHREADS worker threads
 // make sure func(n) is thread-safe
